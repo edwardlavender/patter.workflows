@@ -2,29 +2,15 @@
 % Please edit documentation in R/estimate-coord.R
 \name{estimate_coord}
 \alias{estimate_coord}
-\alias{estimate_coord_coa}
-\alias{estimate_coord_rsp}
-\alias{estimate_coord_patter}
 \title{Estimate coordinates}
 \usage{
-estimate_coord_coa(sim, map, datasets, constructor)
-
-estimate_coord_rsp(sim, map, datasets, constructor)
-
-estimate_coord_patter(sim, map, datasets, constructor)
+estimate_coord(sim, map, datasets, constructor, algorithm, verbose)
 }
 \description{
-These functions support coordinate estimation.
+This internal function is the workhorse of \code{\link[=lapply_estimate_coord]{lapply_estimate_coord()}}. The function wraps an \code{algorithm} function that estimates coordinates.
 }
 \details{
-The call stack is as follows:
-\enumerate{
-\item \verb{lapply_estimate_coord_*()} is the exported interface for iterative coordinate estimation using different algorithms;
-\item \code{lapply_estimate_coord()} is the core internal routine;
-\item \verb{estimate_coord_*()} is a interface for coordinate estimation for a single iteration for different algorithms;
-\item \code{estimate_coord()} is the core internal routine, implementing the algorithms with error handling, call statistics etc.;
-\item \verb{algorithm_*()} functions implement the algorithms;
-}
+For details, see the wrapper function \code{\link[=lapply_estimate_coord]{lapply_estimate_coord()}}.
 }
 \author{
 Edward Lavender

@@ -2,36 +2,14 @@
 % Please edit documentation in R/estimate-coord-iter.R
 \name{lapply_estimate_coord}
 \alias{lapply_estimate_coord}
-\alias{lapply_estimate_coord_coa}
-\alias{lapply_estimate_coord_rsp}
-\alias{lapply_estimate_coord_patter}
 \title{Estimate coordinates}
 \usage{
-lapply_estimate_coord_coa(
-  iteration,
-  map,
-  datasets,
-  constructor = constructor_coa,
-  log.coffee = NULL,
-  log.txt = NULL,
-  verbose = TRUE
-)
-
-lapply_estimate_coord_rsp(
-  iteration,
-  map,
-  datasets,
-  constructor = constructor_rsp,
-  log.coffee = NULL,
-  log.txt = NULL,
-  verbose = TRUE
-)
-
-lapply_estimate_coord_patter(
+lapply_estimate_coord(
   iteration,
   map,
   datasets,
   constructor,
+  algorithm,
   log.coffee = NULL,
   log.txt = NULL,
   verbose = TRUE
@@ -41,59 +19,91 @@ lapply_estimate_coord_patter(
 \item{iteration}{An iteration \code{\link{data.table}}.
 \itemize{
 \item Each row corresponds to one algorithm run and is passed to \code{constructor()}.
-\item Required columns depend on the \code{constructor()} function but generally include run-specific parameters (such as \code{delta_t} for the \code{\link[patter:coa]{patter::coa()}}) and file paths.
+\item Required columns depend on the \code{constructor()} function but generally include:
+\itemize{
+\item \code{index} (essential): a unique identifier for each row;
+\item \code{unit_id} (generally required): a unique identifer for each unit (e.g., individual/time block);
+\item run-specific parameters, such as:
+\itemize{
+\item \code{delta_t} for \code{\link[=constructor_coa]{constructor_coa()}};
+\item \code{er.ad} for \code{\link[=constructor_rsp]{constructor_rsp()}};
+}
+\item \code{folder_coord} (optional): a \code{character} path to a folder in which to write outputs;
+}
 }}
 
-\item{map}{A map that defines the study area, passed to \code{constructor()}.
+\item{map}{A map that defines the study area, passed to \code{constructor()}:
 \itemize{
-\item For \code{\link[=estimate_coord_coa]{estimate_coord_coa()}} and \code{\link[=estimate_coord_rsp]{estimate_coord_rsp()}} \code{map} is a \code{\link{SpatRaster}}.
-\item For \code{\link[=estimate_coord_patter]{estimate_coord_patter()}}, \code{map} can be a \code{\link{SpatRaster}} or a \code{character} file path.
+\item \code{map} is a typically a \code{\link{SpatRaster}};
+\item \code{map} may be another input, such as a \code{character} file path, if supported by \code{constructor()};
 }}
 
 \item{datasets}{(optional) A named \code{list} of datasets, passed to \code{constructor()}.}
 
-\item{constructor}{A \code{\link{constructor}} \code{function} that constructs a named \code{list} of arguments for the algorithm routine (e.g., \code{\link[patter:coa]{patter::coa()}}).
+\item{constructor}{A \code{\link{constructor}} \code{function} that constructs a named \code{list} of arguments for the \code{algorithm} function, given the \code{iteration} row, \code{map}, \code{datasets} and \code{verbose}:
 \itemize{
-\item For \code{\link[=algorithm_coa]{algorithm_coa()}} and \code{\link[=algorithm_rsp]{algorithm_rsp()}}, default constructors are provided.
-\item For \code{\link[=algorithm_particle]{algorithm_particle()}}, a require a user-defined constructor is required.
-}
-
-For function requirements, see \code{\link{constructor}}.}
-
-\item{verbose}{User output control options.
-\itemize{
-\item \code{verbose} is a \code{logical} variable that defines whether or not to output user messages to the console or \code{log.txt} if specified.
+\item For \code{\link[=algorithm_coa]{algorithm_coa()}}, the default constructor is \code{\link[=constructor_coa]{constructor_coa()}};
+\item For \code{\link[=algorithm_rsp]{algorithm_rsp()}}, the default constructor is \code{\link[=constructor_rsp]{constructor_rsp()}};
+\item For \code{\link[=algorithm_particle]{algorithm_particle()}}, a user-defined constructor is required;
 }}
 
-\item{(optional)}{log.coffee,log.txt Log options.
+\item{algorithm}{An \verb{algorithm_*()} function that estimates coordinates, such as:
+\itemize{
+\item \code{\link[=algorithm_coa]{algorithm_coa()}} for the COA algorithm;
+\item \code{\link[=algorithm_rsp]{algorithm_rsp()}} for the RSP algorithm;
+\item \code{\link[=algorithm_particle]{algorithm_particle()}} for a particle algorithm;
+}}
+
+\item{log.coffee, log.txt}{(optional) Log options.
 \itemize{
 \item \code{log.coffee} is a \code{character} that defines the directory in which to record the timing of 'coffee breaks', during which time the computer is given a rest (see \code{\link[=coffee]{coffee()}}). Use \code{NULL} to suppress coffee breaks.
 \item If \code{verbose = TRUE}, \code{log.txt} is a \code{character} that defines a path to a \code{log.txt} file in which output user messages are recorded.
 }}
+
+\item{verbose}{User output controls.
+\itemize{
+\item \code{verbose} is a \code{logical} variable that defines whether or not to output user messages to the console or \code{log.txt} if specified.
+}}
+}
+\value{
+The function returns a \code{list}, with one element for each \code{iteration} row. \code{List} elements are controlled by \code{\link[=estimate_coord]{estimate_coord()}}:
+\itemize{
+\item By default, \code{\link[=estimate_coord]{estimate_coord()}} returns a named \code{list} with two elements:
+\itemize{
+\item \code{coord}: The object returned by the \code{algorithm()} function (e.g., a \code{\link{data.table}} of coordinates);
+\item \code{callstats}: A one-row \code{\link{data.table}} of call statistics with the following columns:
+\itemize{
+\item \code{id}: An integer that defines the row index in \code{iteration} (\code{iteration$index});
+\item \code{algorithm}: A \code{character} label for the algorithm, defined by \code{deparse(substitute(algorithm))};
+\item \code{success}: A \code{logical} variable that defines whether or not \code{algorithm} ran successfully (without errors);
+\item \code{error}: A \code{character} that defines error messages or \code{NA_character_} otherwise;
+\item \code{ntrial}: An \code{integer} that defines the number of trials, if relevant;
+\item \code{time}: A \code{double} that defines the time (s) of the \code{algorithm} run;
+}
+}
+\item If \code{iteration} contains a \code{folder_coord} column, \code{\link[=estimate_coord]{estimate_coord()}} returns \code{invisible(NULL)}. Outputs are instead written to file (reducing memory demand), as:
+\itemize{
+\item \code{file.path(folder_coord, "coord.qs")}
+\item \code{file.path(folder_coord, "callstats.qs")}
+}
+}
 }
 \description{
-These functions iteratively estimate coordinates using selected algorithms, such as the COA, RSP and particle algorithms (i.e., \code{\link[=coa_algorithm]{coa_algorithm()}}, \code{\link[=rsp_algorithm]{rsp_algorithm()}} and \code{\link[=particle_algorithm]{particle_algorithm()}}).
+This function iteratively estimates coordinates using a user-defined algorithm function, such as \code{\link[=algorithm_coa]{algorithm_coa()}}, \code{\link[=algorithm_rsp]{algorithm_rsp()}} or \code{\link[=algorithm_particle]{algorithm_particle()}}.
 }
 \details{
-\verb{lapply_estimate_coord_*()} wraps the internal function \code{\link[=lapply_estimate_coord]{lapply_estimate_coord()}}. This function iterate over rows in \code{iteration} via \code{\link[=cl_lapply]{cl_lapply()}} and applies one of the following internal routines:
+\code{\link[=lapply_estimate_coord]{lapply_estimate_coord()}} iterates over rows in \code{iteration} via \code{\link[=cl_lapply]{cl_lapply()}} and applies the internal function \code{\link[=estimate_coord]{estimate_coord()}}. \code{\link[=estimate_coord]{estimate_coord()}} function accepts the \code{iteration} row, \code{map}, \code{datasets}, \code{constructor}, \code{algorithm} and \code{verbose} arguments. Using these inputs, \code{\link[=estimate_coord]{estimate_coord()}}:
 \itemize{
-\item \code{\link[=estimate_coord_coa]{estimate_coord_coa()}}
-\item \code{\link[=estimate_coord_rsp]{estimate_coord_rsp()}}
-\item \code{\link[=estimate_coord_patter]{estimate_coord_patter()}}
-}
-
-Internally, these routines wrap \code{\link[=estimate_coord]{estimate_coord()}}. This function:
-\itemize{
-\item Constructs a named \code{list} of arguments for an algorithm function, via a \code{\link{constructor}}, given information in the \code{iteration} row, \code{map} and \code{datasets};
+\item Constructs a named \code{list} of arguments for an algorithm function, via a \code{\link{constructor}}, given information in the supplied arguments;
 \item Passes the arguments to an algorithm function, such as:
 \itemize{
-\item \code{\link[=algorithm_coa]{algorithm_coa()}}
-\item \code{\link[=algorithm_rsp]{algorithm_rsp()}}
-\item \code{\link[=algorithm_particle]{algorithm_particle()}});
+\item \code{\link[=algorithm_coa]{algorithm_coa()}} for the COA algorithm;
+\item \code{\link[=algorithm_rsp]{algorithm_rsp()}} for the RSP algorithm;
+\item \code{\link[=algorithm_particle]{algorithm_particle()}} for a particle algorithm;
 }
 \item Implements error handling;
 \item Records estimated coordinates and call statistics (such as computation time);
-\item Optionally writes outputs to disk or returns them in memory
+\item Optionally writes outputs to disk or returns them in memory;
 }
 }
 \author{

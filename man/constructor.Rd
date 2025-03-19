@@ -6,31 +6,59 @@
 \alias{constructor_rsp}
 \title{Estimate coordinates: constructors}
 \usage{
-constructor_coa(sim, map, datasets)
+constructor_coa(sim, map, datasets, verbose)
 
-constructor_rsp(sim, map, datasets)
+constructor_rsp(sim, map, datasets, verbose)
+}
+\arguments{
+\item{sim}{A \code{\link{data.table}} row, inherited from \code{\link[=lapply_estimate_coord]{lapply_estimate_coord()}}.}
+
+\item{map}{A \code{\link{data.table}} row, inherited from \code{\link[=lapply_estimate_coord]{lapply_estimate_coord()}}.}
+
+\item{datasets}{A \code{\link{data.table}} row, inherited from \code{\link[=lapply_estimate_coord]{lapply_estimate_coord()}}.}
+
+\item{verbose}{A \code{logical} variable, , inherited from \code{\link[=lapply_estimate_coord]{lapply_estimate_coord()}}.}
+}
+\value{
+\verb{constructor_*()} functions return a named \code{list} of arguments for an algorithm (e.g., \code{\link[=algorithm_coa]{algorithm_coa()}}).
 }
 \description{
-\code{constructor} functions construct a named \code{list} of arguments for an algorith implementation.
+\code{constructor} functions construct a named \code{list} of arguments for an algorithm implementation.
 }
 \details{
 Default \code{constructors} are provided for the COA, RSP and AC particle algorithms.
 
 For \code{\link[=constructor_coa]{constructor_coa()}}:
 \itemize{
-\item \code{sim} should include a \code{delta_t} column
-\item \code{datasets} should include \code{detections_by_unit} and \code{moorings}
+\item \code{sim} should include the following columns:
+\itemize{
+\item \code{unit_id}
+\item \code{delta_t}
+}
+\item \code{datasets} should include the following elements:
+\itemize{
+\item \code{detections_by_unit}
+\item \code{moorings}
+}
 }
 
 For \code{\link[=constructor_rsp]{constructor_rsp()}}:
 \itemize{
-\item \code{sim} should include an \code{er.ad} column
-\item \code{datasets} should include \code{detections_by_unit}, \code{moorings} and \code{t.layer}
+\item \code{sim} should include the following columns:
+\itemize{
+\item \code{unit_id}
+\item \code{er.ad}
+}
+\item \code{datasets} should include the following elements:
+\itemize{
+\item \code{detections_by_unit}
+\item \code{moorings}
+\item \code{t.layer};
+}
 }
 
-For particle algorithms, constructors have to be defined manually.
+For particle algorithms, constructors have to be defined manually, following the same function signature.
 }
 \author{
 Edward Lavender
 }
-\keyword{internal}

@@ -3,6 +3,7 @@
 \name{algorithm}
 \alias{algorithm}
 \alias{algorithm_coa}
+\alias{algorithm_rsp}
 \alias{algorithm_particle}
 \title{Estimate coordinates: algorithms}
 \usage{
@@ -17,21 +18,50 @@ algorithm_coa(
   .one_page = TRUE
 )
 
-algorithm_particle(sim, map, datasets, constructor)
+algorithm_rsp(
+  input,
+  t.layer,
+  coord.x,
+  coord.y,
+  distance = 250,
+  tags = NULL,
+  recaptures = FALSE,
+  time.step = 10,
+  min.time = 10,
+  max.time = 24,
+  er.ad,
+  verbose = FALSE,
+  debug = FALSE
+)
 
-algorithm_particle(sim, map, datasets, constructor)
+algorithm_particle(sim, map, datasets, constructor, verbose)
 }
 \description{
-These functions are algorithms.
+These functions implement algorithms that estimate coordinates.
 }
 \details{
 \itemize{
-\item \code{\link{algorithm_coa}} wraps \code{patter::coa()}
-\item \code{\link{algorithm_rsp}} is \code{\link[RSP:runRSP]{RSP::runRSP()}}
-\item \code{\link{algorithm_particle}} wraps \code{\link[patter:pf_filter]{patter::pf_filter()}} and \code{\link[patter:pf_smoother_two_filter]{patter::pf_smoother_two_filter()}} (via \code{\link[=pf_filter_wrapper]{pf_filter_wrapper()}} and \code{\link[=pf_smoother_wrapper]{pf_smoother_wrapper()}});
+\item \code{\link{algorithm_coa}} wraps \code{patter::coa()};
+\item \code{\link{algorithm_rsp}} is \code{\link[RSP:runRSP]{RSP::runRSP()}};
+\item \code{\link{algorithm_particle}} wraps \code{\link{patter}} functions:
+\itemize{
+\item The \code{iteration} row (\code{sim}) should include:
+\itemize{
+\item A \code{"smooth"} \code{logical} variable that defines whether or not to implement smoothing;
+}
+\item The \code{constructor} function should return a named \code{list} with \code{"forward"} and \code{"backward"} elements;
+\item The forward element are used to run the forward particle filter via \code{\link[=pf_filter]{pf_filter()}};
+\item The backward element is used to run the backward particle filter via \code{\link[=pf_filter]{pf_filter()}};
+\item Particle smoothing is then implemented via \code{\link[=pf_smoother_two_filter]{pf_smoother_two_filter()}};
+\item The function returns a named \code{list} with the following elements:
+\itemize{
+\item \verb{"forward}
+\item \verb{"backward}
+\item \code{"smooth"}
+}
+}
 }
 }
 \author{
 Edward Lavender
 }
-\keyword{internal}

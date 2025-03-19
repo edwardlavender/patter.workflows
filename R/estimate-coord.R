@@ -1,44 +1,58 @@
 #' @title Estimate coordinates
-#' @description These functions support coordinate estimation. 
-#' @details
-#' The call stack is as follows:
-#' 1. `lapply_estimate_coord_*()` is the exported interface for iterative coordinate estimation using different algorithms;
-#' 2. `lapply_estimate_coord()` is the core internal routine;
-#' 3. `estimate_coord_*()` is a interface for coordinate estimation for a single iteration for different algorithms;
-#' 4. `estimate_coord()` is the core internal routine, implementing the algorithms with error handling, call statistics etc.;
-#' 5. `algorithm_*()` functions implement the algorithms;
+#' @description This internal function is the workhorse of [`lapply_estimate_coord()`]. The function wraps an `algorithm` function that estimates coordinates. 
+#' @details For details, see the wrapper function [`lapply_estimate_coord()`].
 #' @author Edward Lavender
 #' @name estimate_coord
-
-#' @rdname estimate_coord
 #' @keywords internal
 
-estimate_coord_coa <- function(sim, map, datasets, constructor) {
-  estimate_coord(sim         = sim, 
-                 map         = map, 
-                 datasets    = datasets, 
-                 constructor = constructor, 
-                 algorithm   = algorithm_coa)
-}
-
-#' @rdname estimate_coord
-#' @keywords internal
-
-estimate_coord_rsp <- function(sim, map, datasets, constructor) {
-  estimate_coord(sim         = sim, 
-                 map         = map, 
-                 datasets    = datasets, 
-                 constructor = constructor, 
-                 algorithm   = algorithm_rsp)
-}
-
-#' @rdname estimate_coord
-#' @keywords internal
-
-estimate_coord_patter <- function(sim, map, datasets, constructor) {
-  estimate_coord(sim         = sim, 
-                 map         = map, 
-                 datasets    = datasets, 
-                 constructor = constructor, 
-                 algorithm   = algorithm_particle)
+estimate_coord <- function(sim, map, datasets, constructor, algorithm, verbose) {
+  
+  # Initialise
+  coffee()
+  cat_init(sim$index)
+  check_names(sim, "index")
+  
+  # Define algorithm inputs
+  args <- constructor(sim = sim, map = map, datasets = datasets, verbose = verbose)
+  
+  # Run algorithm
+  error   <- NA_character_
+  success <- TRUE
+  t1      <- Sys.time()
+  pout    <- tryCatch(do.call(algorithm, args), error = function(e) e)
+  t2      <- Sys.time()
+  
+  # Handle errors
+  if (inherits(pout, "error")) {
+    success <- FALSE
+    error   <- pout$message
+    message(error)
+  } else {
+    time <- secs(t2, t1)
+  }
+  
+  # Collect success statistics
+  # * TO DO
+  # * Currently, success = TRUE even if the algorithm did not converge (in the case of a particle algorithm);
+  dout <- data.table(id        = sim$index, 
+                     algorithm = deparse(substitute(algorithm)), 
+                     success   = success, 
+                     error     = error, 
+                     ntrial    = NA_integer_,
+                     time      = time)
+  
+  # (optional) Write outputs
+  write <- rlang::has_name(sim, "folder_coord")
+  if (write) {
+    pfile <- "coord.qs"
+    dfile <- "callstats.qs"
+    if (success) {
+      qs::qsave(pout, file.path(sim$folder_coord, pfile))
+    }
+    qs::qsave(dout, file.path(sim$folder_coord, dfile))
+    return(nothing())
+  } else {
+    return(list(coord = pout, callstats = dout))
+  }
+  
 }
