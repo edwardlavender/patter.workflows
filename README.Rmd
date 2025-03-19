@@ -1,0 +1,106 @@
+---
+output: github_document
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# `patter.workflows`
+**Workflows for the `patter` `R` package
+
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![CRAN status](https://www.r-pkg.org/badges/version/patter)](https://CRAN.R-project.org/package=patter)
+
+`patter.workflows` is an extension of the `patter` `R` package. 
+
+> **Note:**
+> `patter.workflows` is a new `R` package. Like all new packages, you should use it with a degree of caution. Please share feedback and issues.
+
+# Installation
+
+1. **Install `patter`** and its dependencies by following the instructions here.
+
+2. **Install `patter.workflows`** with:
+
+``` r
+install.packages(c("devtools", "rmarkdown"))
+devtools::install_github("edwardlavender/patter", 
+                         dependencies = TRUE, 
+                         build_vignettes = rmarkdown::pandoc_available())
+```
+
+# Functionality 
+
+## Project management 
+
+* `dir_*()` helpers support project management
+    * `dirs.create()`
+    * `dirs.copy()`
+
+* `cat_*()` helpers for user feedback
+
+* `coffee()` 
+
+## Julia interface
+
+* `julia_assign_SpatRaster()`
+
+## Packackge conversion
+
+* `as_*()` functions for package-conversion routines:
+    * `as_actel()`
+    * `as_glatos()`
+    
+## Coordinate estimation 
+
+* `lapply_estimate_coord_*()` to estimate coordinates:
+    * `lapply_estimate_coord_coa()`
+    * `lapply_estimate_coord_rsp()`
+    * `lapply_estimate_coord_patter()`
+    
+## UD estimation 
+    
+* `lapply_estimate_ud_*()` functions to estimate utilisation distributions:
+    * `lapply_estimate_ud_pou()`
+    * `lapply_estimate_ud_spatstat()`
+    * `lapply_estimate_ud_dbbmm()` 
+    
+## Visualisation 
+    
+* `lapply_qplot_*()` functions for quick plots:
+    * `lapply_qplot_coord()`
+    * `lapply_qplot_ud()`
+    
+* `gg*()` functions for `ggplot2` wrappers:
+    * `ggmaps()` 
+    
+## Spatial operations
+
+*  Read/write toutines:
+  * `qreadvect()`, `qsavevect()`
+  * `qreadext()`, `qsaveext()`
+        
+* `dist_*()` functions
+  * `dist_along_path()` 
+
+* `map_`()
+  * `map_ram()`
+  * `map_normalise()`
+  * `map_bbox()`
+
+# Citation 
+
+To cite `patter.workflows` in publications, please use:
+
+* Lavender, E. et al. (2024). Particle algorithms for animal movement modelling in receiver arrays. bioRxiv. https://doi.org/10.1101/2024.09.16.613223. 
+* Lavender, E. et al. (2024). Particle algorithms for animal tracking in `R` and `Julia`. bioRxiv. https://doi.org/10.1101/2024.07.30.605733
+* Lavender, E. et al. (2025). Animal tracking for conservation with particle algorithms. 
+
+## Code of Conduct
+
+Please note that the patter.workflows project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/1/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.

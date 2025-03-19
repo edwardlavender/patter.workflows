@@ -1,0 +1,8 @@
+developing callstack:
+
+1. lapply_estimate_coord_coa 
+2. lapply_estimate_coord
+3. estimate_coord
+4. coa()
+
+-> lapply_ functions should accept constructor argument
