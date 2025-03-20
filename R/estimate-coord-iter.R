@@ -23,11 +23,15 @@
 #' * [`algorithm_rsp()`] for the RSP algorithm;
 #' * [`algorithm_particle()`] for a particle algorithm;
 #' 
-#' @param log.coffee,log.txt (optional) Log options. 
-#' * `log.coffee` is a `character` that defines the directory in which to record the timing of 'coffee breaks', during which time the computer is given a rest (see [`coffee()`]). Use `NULL` to suppress coffee breaks. 
-#' * If `verbose = TRUE`, `log.txt` is a `character` that defines a path to a `log.txt` file in which output user messages are recorded. 
-#' @param verbose User output controls. 
-#' * `verbose` is a `logical` variable that defines whether or not to output user messages to the console or `log.txt` if specified. 
+#' @param coffee [`coffee()`] break options. 
+#' * Use `NULL` to suppress coffee breaks.
+#' * Use `list()` for default arguments.
+#' * Use a named `list` of arguments passed to [`coffee()`] to customise coffee breaks.
+#' 
+#' @param verbose A logical variable or a string that defines the path to a text file.
+#' * `.verbose = FALSE` suppresses user outputs;
+#' * `.verbose = TRUE` sends user outputs to the console;
+#' * .`verbose = file.path("path", "to", "text", "file.txt")` sends user outputs to a `.txt` file;
 #' 
 #' @details
 #' [`lapply_estimate_coord()`] iterates over rows in `iteration` via [`cl_lapply()`] and applies the internal function [`estimate_coord()`]. [`estimate_coord()`] function accepts the `iteration` row, `map`, `datasets`, `constructor`, `algorithm` and `verbose` arguments. Using these inputs, [`estimate_coord()`]:
@@ -67,25 +71,39 @@ lapply_estimate_coord <- function(iteration,
                                   datasets, 
                                   constructor,
                                   algorithm,  
-                                  log.coffee = NULL,
-                                  log.txt = NULL, 
+                                  coffee = list(),
                                   verbose = TRUE
                                   ) {
   
-  # Boilerplate  
-  t1   <- Sys.time()
-  log.txt <- sink_open(log.txt = log.txt)
-  cats <- cat_setup(.fun = "lapply_estimate_coord", .verbose = verbose)
-  on.exit(eval(cats$exit, envir = cats$envir), add = TRUE)
+  #### User output control
+  # A. Open a sink for use with cat() in downstream functions (convenient)
+  # B. Use cat_setup() to provide a startup message (for convenience)
+  # C. Set verbose to TRUE or FALSE and make available to downstream functions
+  t1       <- Sys.time()
+  log.txt <- NULL
+  if (inherits(verbose, "character")) {
+    log.txt <- sink_open(log.txt = verbose)
+    verbose <- TRUE
+  }
+  # cats    <- cat_setup(.fun = "lapply_estimate_coord", .verbose = verbose)
+  # on.exit(eval(cats$exit, envir = cats$envir), add = TRUE)
   on.exit(sink_close(log.txt), add = TRUE)
-  check_dir_empty(log.coffee)
   
-  # Estimate coordinates via algorithm()
+  #### Process iteration
+  # Define index
   iteration <- copy(iteration)
   if (!rlang::has_name(iteration, "index")) {
     index <- NULL
     iteration[, index := 1:.N]
   }
+  # Validate columns
+  if (rlang::has_name(iteration, "folder_coord")) {
+    if (!all(dir.exists(iteration$folder_coord))) {
+      abort("All `iteration$folder_coord` directories should exist.")
+    }
+  }
+  
+  #### Estimate coordinates via algorithm()
   iteration_ls <- split(iteration, seq_row(iteration))
   out <- cl_lapply(iteration_ls, function(sim) {
     estimate_coord(sim         = sim, 
@@ -93,9 +111,14 @@ lapply_estimate_coord <- function(iteration,
                    datasets    = datasets, 
                    constructor = constructor, 
                    algorithm   = algorithm, 
+                   coffee      = coffee,
                    verbose     = verbose)
   })
   
+  #### Clean up coffeehouse
+
+  
+  #### Return outputs
   out
   
 }

@@ -4,7 +4,12 @@
 \alias{estimate_coord}
 \title{Estimate coordinates}
 \usage{
-estimate_coord(sim, map, datasets, constructor, algorithm, verbose)
+estimate_coord(sim, map, datasets, constructor, algorithm, coffee, verbose)
+}
+\arguments{
+\item{sim, map, datasets, constructor, algorithm, coffee}{Arguments directly inherited from \code{\link[=lapply_estimate_coord]{lapply_estimate_coord()}}.}
+
+\item{verbose}{A \code{logical} variable that defines whether or not to send use outputs to the console or a \code{.txt} file.}
 }
 \description{
 This internal function is the workhorse of \code{\link[=lapply_estimate_coord]{lapply_estimate_coord()}}. The function wraps an \code{algorithm} function that estimates coordinates.

@@ -1,19 +1,20 @@
 #' @title Estimate coordinates
 #' @description This internal function is the workhorse of [`lapply_estimate_coord()`]. The function wraps an `algorithm` function that estimates coordinates. 
+#' @param sim,map,datasets,constructor,algorithm,coffee Arguments directly inherited from [`lapply_estimate_coord()`].
+#' @param verbose A `logical` variable that defines whether or not to send use outputs to the console or a `.txt` file. 
 #' @details For details, see the wrapper function [`lapply_estimate_coord()`].
 #' @author Edward Lavender
 #' @name estimate_coord
 #' @keywords internal
 
-estimate_coord <- function(sim, map, datasets, constructor, algorithm, verbose) {
+estimate_coord <- function(sim, map, datasets, constructor, algorithm, coffee, verbose) {
   
   # Initialise
-  coffee()
-  cat_init(sim$index)
-  check_names(sim, "index")
+  coffee_do(coffee)
+  cat_next(index = sim$index, verbose = verbose)
   
   # Define algorithm inputs
-  args <- constructor(sim = sim, map = map, datasets = datasets, verbose = verbose)
+  args     <- constructor(sim = sim, map = map, datasets = datasets, verbose = verbose)
   
   # Run algorithm
   error   <- NA_character_

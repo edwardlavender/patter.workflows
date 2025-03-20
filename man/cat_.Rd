@@ -2,16 +2,19 @@
 % Please edit documentation in R/utils-cat.R
 \name{cat_}
 \alias{cat_}
+\alias{cat_time}
 \alias{cat_line}
-\alias{cat_iter}
-\alias{cat_init}
+\alias{cat_row}
+\alias{cat_next}
 \title{Utilities: \verb{cat_*()} helpers}
 \usage{
+cat_time()
+
 cat_line()
 
-cat_iter(t)
+cat_row(index)
 
-cat_init(t)
+cat_next(index, verbose)
 }
 \description{
 Utilities: \verb{cat_*()} helpers

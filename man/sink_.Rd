@@ -2,15 +2,20 @@
 % Please edit documentation in R/utils-cat.R
 \name{sink_}
 \alias{sink_}
+\alias{cat_do}
 \alias{sink_open}
 \alias{sink_close}
 \title{Utilities: \verb{sink_*()} wrappers}
 \usage{
-sink_open(log.folder = NULL, log.txt = NULL)
+cat_do(..., verbose)
+
+sink_open(log.txt = NULL)
 
 sink_close(log.txt = NULL)
 }
 \description{
+Utilities: \verb{sink_*()} wrappers
+
 Utilities: \verb{sink_*()} wrappers
 }
 \keyword{internal}

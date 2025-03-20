@@ -7,60 +7,45 @@
 \alias{algorithm_particle}
 \title{Estimate coordinates: algorithms}
 \usage{
-algorithm_coa(
-  .map,
-  .detections,
-  .moorings = NULL,
-  .delta_t,
-  .split = NULL,
-  .plot_weights = TRUE,
-  ...,
-  .one_page = TRUE
-)
+algorithm_coa(...)
 
-algorithm_rsp(
-  input,
-  t.layer,
-  coord.x,
-  coord.y,
-  distance = 250,
-  tags = NULL,
-  recaptures = FALSE,
-  time.step = 10,
-  min.time = 10,
-  max.time = 24,
-  er.ad,
-  verbose = FALSE,
-  debug = FALSE
-)
+algorithm_rsp(...)
 
-algorithm_particle(sim, map, datasets, constructor, verbose)
+algorithm_particle(forward, backward, smooth, verbose)
+}
+\arguments{
+\item{...}{Arguments for algorithms defined in other packages:
+\itemize{
+\item For \code{\link{algorithm_coa}}, \code{...} is passed directly to \code{\link[patter:coa]{patter::coa()}};
+\item For \code{\link{algorithm_rsp}}, \code{...} is passed directly to \code{\link[RSP:runRSP]{RSP::runRSP()}};
+}}
+
+\item{forward, backward, smooth, verbose}{Arguments for \code{\link[=algorithm_particle]{algorithm_particle()}}:
+\itemize{
+\item \code{forward} is a named \code{list} of arguments for the forward particle filter (\code{\link[=pf_filter]{pf_filter()}});
+\item \code{backward} is a named \code{list} of arguments for the backward particle filter (\code{\link[=pf_filter]{pf_filter()}});
+\item \code{smooth} is a named \code{list} of arguments for the two-filter smoother (\code{\link[=pf_smoother_two_filter]{pf_smoother_two_filter()}});
+}
+
+To implement smoothing, all arguments must be set. Use \code{smooth = list()} to implement smoothing with default arguments.
+
+Use \code{backward = NULL} and \code{smooth = NULL} to suppress smoothing (and only run the forward particle filter).}
+}
+\value{
+All functions return estimated coordinates in function-specific formats:
+\itemize{
+\item For \code{\link[=algorithm_coa]{algorithm_coa()}}, see \code{\link[patter:coa]{patter::coa()}};
+\item For \code{\link[=algorithm_rsp]{algorithm_rsp()}}, see \code{\link[RSP:runRSP]{RSP::runRSP()}};
+\item For \code{\link[=algorithm_particle]{algorithm_particle()}}, a \code{named} list with three elements is returned:
+\itemize{
+\item \code{forward} holds the outputs from the forward particle filter (\code{\link[=pf_filter]{pf_filter()}});
+\item \code{backward} holds the outputs from the backward particle filter (\code{\link[=pf_filter]{pf_filter()}}) or is \code{NULL} if this routine was not implemented;
+\item \code{smooth} holds the outputs from the two-filter smoother (\code{\link[=pf_smoother_two_filter]{pf_smoother_two_filter()}}) or is \code{NULL} if this routine was not implemented;
+}
+}
 }
 \description{
 These functions implement algorithms that estimate coordinates.
-}
-\details{
-\itemize{
-\item \code{\link{algorithm_coa}} wraps \code{patter::coa()};
-\item \code{\link{algorithm_rsp}} is \code{\link[RSP:runRSP]{RSP::runRSP()}};
-\item \code{\link{algorithm_particle}} wraps \code{\link{patter}} functions:
-\itemize{
-\item The \code{iteration} row (\code{sim}) should include:
-\itemize{
-\item A \code{"smooth"} \code{logical} variable that defines whether or not to implement smoothing;
-}
-\item The \code{constructor} function should return a named \code{list} with \code{"forward"} and \code{"backward"} elements;
-\item The forward element are used to run the forward particle filter via \code{\link[=pf_filter]{pf_filter()}};
-\item The backward element is used to run the backward particle filter via \code{\link[=pf_filter]{pf_filter()}};
-\item Particle smoothing is then implemented via \code{\link[=pf_smoother_two_filter]{pf_smoother_two_filter()}};
-\item The function returns a named \code{list} with the following elements:
-\itemize{
-\item \verb{"forward}
-\item \verb{"backward}
-\item \code{"smooth"}
-}
-}
-}
 }
 \author{
 Edward Lavender

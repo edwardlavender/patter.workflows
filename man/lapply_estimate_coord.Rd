@@ -10,8 +10,7 @@ lapply_estimate_coord(
   datasets,
   constructor,
   algorithm,
-  log.coffee = NULL,
-  log.txt = NULL,
+  coffee = list(),
   verbose = TRUE
 )
 }
@@ -54,15 +53,18 @@ lapply_estimate_coord(
 \item \code{\link[=algorithm_particle]{algorithm_particle()}} for a particle algorithm;
 }}
 
-\item{log.coffee, log.txt}{(optional) Log options.
+\item{coffee}{\code{\link[=coffee]{coffee()}} break options.
 \itemize{
-\item \code{log.coffee} is a \code{character} that defines the directory in which to record the timing of 'coffee breaks', during which time the computer is given a rest (see \code{\link[=coffee]{coffee()}}). Use \code{NULL} to suppress coffee breaks.
-\item If \code{verbose = TRUE}, \code{log.txt} is a \code{character} that defines a path to a \code{log.txt} file in which output user messages are recorded.
+\item Use \code{NULL} to suppress coffee breaks.
+\item Use \code{list()} for default arguments.
+\item Use a named \code{list} of arguments passed to \code{\link[=coffee]{coffee()}} to customise coffee breaks.
 }}
 
-\item{verbose}{User output controls.
+\item{verbose}{A logical variable or a string that defines the path to a text file.
 \itemize{
-\item \code{verbose} is a \code{logical} variable that defines whether or not to output user messages to the console or \code{log.txt} if specified.
+\item \code{.verbose = FALSE} suppresses user outputs;
+\item \code{.verbose = TRUE} sends user outputs to the console;
+\item .\code{verbose = file.path("path", "to", "text", "file.txt")} sends user outputs to a \code{.txt} file;
 }}
 }
 \value{

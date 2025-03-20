@@ -4,46 +4,65 @@
 #' @rdname cat_
 #' @keywords internal
 
+# Print the time 
+cat_time <- function() {
+  cat(paste0(Sys.time(), "\n"))
+  nothing()
+}
+
+#' @rdname cat_
+#' @keywords internal
+
+# Print a line 
 cat_line <- function() {
   cat("\n\n\n---------------------------------------------------------------\n")
+  nothing()
 }
 
 #' @rdname cat_
 #' @keywords internal
 
-cat_iter <- function(t) {
-  msg("\n On row {t}...", .envir = environment())
+# Print the row id 
+cat_row <- function(index) {
+  cat(paste0("\n On row ", index, "...\n"))
+  nothing()
 }
 
 #' @rdname cat_
 #' @keywords internal
 
-cat_init <- function(t) {
-  cat_line()
-  cat_iter(t)
+# Initialise cat for a given iteration
+cat_next <- function(index, verbose) {
+  if (verbose) {
+    cat_line()
+    cat_row(index)
+  }
   nothing()
 }
 
 #' @title Utilities: `sink_*()` wrappers
 #' @name sink_
 
-sink_open <- function(log.folder = NULL, log.txt = NULL) {
-  # Define log.txt path
-  if (!is.null(log.folder)) {
-    # Define name
-    if (is.null(log.txt)) {
-      log.txt <- paste0("log-", as.numeric(Sys.time()), ".txt")
-    }
-    # Define full file path & validate 
-    log.txt <- file.path(log.folder, log.txt)
-    # stopifnot(!file.exists(log.txt))
+# Optionally run additional cat() calls
+cat_do <- function(..., verbose) {
+  if (verbose) {
+    do.call(cat, list(...))
+  }
+  nothing()
+}
+
+#' @title Utilities: `sink_*()` wrappers
+#' @name sink_
+
+sink_open <- function(log.txt = NULL) {
+  if (!is.null(log.txt)) {
     # Define connection 
     log.txt <- file(log.txt, open = "wt")
     # Open sink
     sink(log.txt, append = TRUE)
     sink(log.txt, type = "message", append = TRUE)
     # Print start time
-    print(Sys.time())
+    cat_time()
   }
   invisible(log.txt)
 }
@@ -53,7 +72,7 @@ sink_open <- function(log.folder = NULL, log.txt = NULL) {
 
 sink_close <- function(log.txt = NULL) {
   if (!is.null(log.txt)) {
-    print(Sys.time())
+    cat_time()
     sink()
     sink(type = "message")
   }
