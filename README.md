@@ -12,12 +12,17 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 status](https://www.r-pkg.org/badges/version/patter)](https://CRAN.R-project.org/package=patter)
 
 `patter.workflows` provides iterative workflows for animal-tracking
-analyses, with a focus on the `patter` package. The core routines
-provide an iterative framework for repeated applications of algorithms
-that estimate the positions of tagged individuals (coordinates) or
-patterns of space use. This facilitates analyses of multiple
-individuals, time blocks and algorithm sensitivity (i.e., multiple
-parameters).
+analyses, with a focus on the
+[`patter`](https://github.com/edwardlavender/patter) package. The core
+routines provide an iterative framework for repeated applications of
+algorithms that estimate the positions of tagged individuals
+(coordinates) or patterns of space use. This facilitates analyses of
+multiple individuals, time blocks and algorithm sensitivity (i.e.,
+multiple parameters). Routines handle the iteration, parallelisation and
+errors, and record both algorithm outputs and call statistics (such as
+computation time). Outputs can be saved in memory or written to disk,
+depending on memory requirements. These routines were motivated by the
+iterative analyses in Lavender et al. (2024) and (2025).
 
 > **Note:** `patter.workflows` is a new `R` package. Like all new
 > packages, you should use it with a degree of caution. Please share
@@ -25,8 +30,9 @@ parameters).
 
 # Installation
 
-1.  **Install `patter`** and its dependencies by following the
-    instructions here.
+1.  **Install [`patter`](https://github.com/edwardlavender/patter)** and
+    its dependencies by following the instructions
+    [here](https://github.com/edwardlavender/patter).
 
 2.  **Install `patter.workflows`** with:
 
@@ -39,35 +45,48 @@ devtools::install_github("edwardlavender/patter",
 
 # Functionality
 
-## Project management
-
-- `dir_*()` helpers support project management
-
-  - `dirs.create()`
-  - `dirs.copy()`
-
-- `cat_*()` helpers for user feedback
-
-- `coffee()`
-
-## Julia interface
-
-- `julia_assign_SpatRaster()`
-
-## Package conversion
-
-- `as_*()` functions for package-conversion routines:
-  - `as_actel()`
-  - `as_glatos()`
-
 ## Coordinate estimation
 
-- `lapply_estimate_coord_*()` to estimate coordinates:
-  - `lapply_estimate_coord_coa()`
-  - `lapply_estimate_coord_rsp()`
-  - `lapply_estimate_coord_patter()`
+**`lapply_estimate_coord()`** is a core function that iteratively
+estimates coordinates using selected algorithms. To implement this
+function, provide an `algorithm_*()` function and a `constructor_*()`
+function that constructs a named list of arguments for `algorithm_*()`.
+
+The following `algorithm` functions are provided:
+
+- Use `algorithm_coa()` to implement the COA algorithm. This wraps
+  `patter::coa()`;
+- Use `algorithm_rsp()` to implement the RSP algorithm. This wraps
+  `RSP::runRSP()`;
+- Use `algorithm_particle()` to implement a particle algorithm. This
+  wraps `patter::pf_filter()` and `pf_smoother_two_filter()`;
+
+These functions are supported by in-built `constructor_*()` functions:
+
+- For `algorithm_coa()`, use `constructor_coa()`;
+- For `algorithm_rsp()`, use `constructor_rsp()`;
+- For `algorithm_particle()`, a custom `constructor_*()` function is
+  required;
+
+For custom `constructor_*()` functions, ancillary helpers are available:
+
+- See `get_input` functions (e.g., `get_dataset_detections()`) to get
+  algorithm inputs;
+
+Interoperability between `patter.workflow` structures and `trackyverse`
+packages is provided by `as_*()` functions:
+
+- `as_actel()` converts
+  [`patter`](https://github.com/edwardlavender/patter) detection
+  datasets to [`actel`](https://github.com/hugomflavio/actel) format;
+- `as_glatos()` converts
+  [`patter`](https://github.com/edwardlavender/patter) detection
+  datasets to
+  [`glatos`](https://github.com/ocean-tracking-network/glatos) format;
 
 ## UD estimation
+
+TO DO
 
 - `lapply_estimate_ud_*()` functions to estimate utilisation
   distributions:
@@ -77,29 +96,52 @@ devtools::install_github("edwardlavender/patter",
 
 ## Visualisation
 
-- `lapply_qplot_*()` functions for quick plots:
-  - `lapply_qplot_coord()`
-  - `lapply_qplot_ud()`
-- `gg*()` functions for `ggplot2` wrappers:
-  - `ggmaps()`
+`patter.workflow` makes additional routines for plotting available.
+
+`lapply_qplot_*()` functions are ‘quick’ plotting routines:
+
+- Use `lapply_qplot_coord()` to plot estimates coordinates for multiple
+  units (e.g., individuals);
+- Use `lapply_qplot_ud()` to plot estimated utilisation distributions
+  for multiple units;
+
+`gg*()` functions provide more sophisticated `ggplot2` wrappers:
+
+- Use `ggmaps()` to map patterns of space use for multiple units;
 
 ## Spatial operations
 
-- Read/write routines:
+`patter.workflow` also makes a series of spatial helpers available for
+custom workflows.
 
-- `qreadvect()`, `qsavevect()`
+For reading/writing spatial vector data with
+[`terra`](https://github.com/rspatial/terra) via
+[`qs`](https://github.com/qsbase/qs), see `q*()` functions:
 
-- `qreadext()`, `qsaveext()`
+- Use `qreadvect()`/`qsavevect()` to read/write `SpatVector`s;
+- Use `qreadext()`/`qsaveext()` to read/write `SpatExtent`s
 
-- `dist_*()` functions
+For [`terra`](https://github.com/rspatial/terra) `SpatRaster` routines,
+see `map_*()` functions:
 
-  - `dist_along_path()`
+- Use `map_ram()` to read a `SpatRaster` into memory;
+- Use `map_normalise()` to normalise a `SpatRaster`;
+- Use `map_bbox()` to get the boundary box;
 
-- `map_`()
+To compute distances, see `dist_*()` functions:
 
-  - `map_ram()`
-  - `map_normalise()`
-  - `map_bbox()`
+- Use `dist_along_path()` to compute distances along a trajectory;
+
+## Project management
+
+`dir_*()` helpers support project management:
+
+- Use `dirs.create()` to create directories;
+- Use `dirs.copy()` copy directories and their contents;
+
+# Examples
+
+For package examples, see `?patter.workflows`.
 
 # Citation
 
@@ -108,10 +150,11 @@ To cite `patter.workflows` in publications, please use:
 - Lavender, E. et al. (2024). Particle algorithms for animal movement
   modelling in receiver arrays. bioRxiv.
   <https://doi.org/10.1101/2024.09.16.613223>.
-- Lavender, E. et al. (2024). Particle algorithms for animal tracking in
-  `R` and `Julia`. bioRxiv. <https://doi.org/10.1101/2024.07.30.605733>
-- Lavender, E. et al. (2025). Animal tracking for conservation with
-  particle algorithms.
+- Lavender, E. et al. (2024). `patter`: particle algorithms for animal
+  tracking in `R` and `Julia`. bioRxiv.
+  <https://doi.org/10.1101/2024.07.30.605733>
+- Lavender, E. et al. (2025). Animal tracking with particle algorithms
+  for conservation. bioRxiv. <https://doi.org/10.1101/2025.02.13.638042>
 
 ## Code of Conduct
 
