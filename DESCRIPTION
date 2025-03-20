@@ -1,5 +1,5 @@
 Package: patter.workflows
-Title: Workflows for `patter`
+Title: Iterative workflows for animal-tracking analyses, with a focus on the `patter` package. The package provides generic routines that facilitate iterative applications of algorithms designed to estimate individual coordinates or map space use to multiple units. This facilitates analyses of multiple individuals, time blocks and algorithm sensitivity (multiple parameters). 
 Version: 0.0.9000
 Authors@R: 
     person("Edward", "Lavender", 
@@ -20,9 +20,13 @@ Imports:
     qs
 Suggests:
     actel,
+    dtplyr,
+    lubridate,
+    ggplot2,
     RSP,
     testthat (>= 3.0.0)
 Remotes::
+    github::hugomflavio/actel
     github::YuriNiella/RSP
 Depends: R (>= 4.1)
 Config/testthat/edition: 3

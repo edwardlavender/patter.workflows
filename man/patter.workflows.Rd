@@ -8,6 +8,9 @@
 \description{
 Workflows for the `patter` R package.
 }
+\examples{
+
+}
 \seealso{
 Useful links:
 \itemize{

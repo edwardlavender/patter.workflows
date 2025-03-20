@@ -10,7 +10,7 @@ lapply_estimate_coord(
   datasets,
   constructor,
   algorithm,
-  coffee = list(),
+  coffee = NULL,
   verbose = TRUE
 )
 }
@@ -20,8 +20,8 @@ lapply_estimate_coord(
 \item Each row corresponds to one algorithm run and is passed to \code{constructor()}.
 \item Required columns depend on the \code{constructor()} function but generally include:
 \itemize{
-\item \code{index} (essential): a unique identifier for each row;
-\item \code{unit_id} (generally required): a unique identifer for each unit (e.g., individual/time block);
+\item \code{index}: a unique identifier for each row;
+\item \code{unit_id}:  a unique identifer for each unit (e.g., individual/time block);
 \item run-specific parameters, such as:
 \itemize{
 \item \code{delta_t} for \code{\link[=constructor_coa]{constructor_coa()}};
@@ -46,7 +46,7 @@ lapply_estimate_coord(
 \item For \code{\link[=algorithm_particle]{algorithm_particle()}}, a user-defined constructor is required;
 }}
 
-\item{algorithm}{An \verb{algorithm_*()} function that estimates coordinates, such as:
+\item{algorithm}{A function that estimates coordinates, such as:
 \itemize{
 \item \code{\link[=algorithm_coa]{algorithm_coa()}} for the COA algorithm;
 \item \code{\link[=algorithm_rsp]{algorithm_rsp()}} for the RSP algorithm;
@@ -55,12 +55,12 @@ lapply_estimate_coord(
 
 \item{coffee}{\code{\link[=coffee]{coffee()}} break options.
 \itemize{
-\item Use \code{NULL} to suppress coffee breaks.
-\item Use \code{list()} for default arguments.
-\item Use a named \code{list} of arguments passed to \code{\link[=coffee]{coffee()}} to customise coffee breaks.
+\item Use \code{NULL} to suppress coffee breaks;
+\item Use \code{list()} for default arguments;
+\item Use a named \code{list} of arguments, passed to \code{\link[=coffee]{coffee()}}, to customise coffee breaks;
 }}
 
-\item{verbose}{A logical variable or a string that defines the path to a text file.
+\item{verbose}{A \code{logical} variable or a \code{string} that defines the path to a text file:
 \itemize{
 \item \code{.verbose = FALSE} suppresses user outputs;
 \item \code{.verbose = TRUE} sends user outputs to the console;
@@ -94,7 +94,7 @@ The function returns a \code{list}, with one element for each \code{iteration} r
 This function iteratively estimates coordinates using a user-defined algorithm function, such as \code{\link[=algorithm_coa]{algorithm_coa()}}, \code{\link[=algorithm_rsp]{algorithm_rsp()}} or \code{\link[=algorithm_particle]{algorithm_particle()}}.
 }
 \details{
-\code{\link[=lapply_estimate_coord]{lapply_estimate_coord()}} iterates over rows in \code{iteration} via \code{\link[=cl_lapply]{cl_lapply()}} and applies the internal function \code{\link[=estimate_coord]{estimate_coord()}}. \code{\link[=estimate_coord]{estimate_coord()}} function accepts the \code{iteration} row, \code{map}, \code{datasets}, \code{constructor}, \code{algorithm} and \code{verbose} arguments. Using these inputs, \code{\link[=estimate_coord]{estimate_coord()}}:
+\code{\link[=lapply_estimate_coord]{lapply_estimate_coord()}} iterates over rows in \code{iteration} via \code{\link[=cl_lapply]{cl_lapply()}} and applies the internal function \code{\link[=estimate_coord]{estimate_coord()}}. \code{\link[=estimate_coord]{estimate_coord()}} accepts the \code{iteration} row, \code{map}, \code{datasets}, \code{constructor}, \code{algorithm} and \code{verbose} arguments. Using these inputs, \code{\link[=estimate_coord]{estimate_coord()}}:
 \itemize{
 \item Constructs a named \code{list} of arguments for an algorithm function, via a \code{\link{constructor}}, given information in the supplied arguments;
 \item Passes the arguments to an algorithm function, such as:

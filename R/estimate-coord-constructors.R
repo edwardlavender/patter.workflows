@@ -1,32 +1,39 @@
 #' @title Estimate coordinates: constructors
 #' @description `constructor` functions construct a named `list` of arguments for an algorithm implementation. 
-#' @param sim A [`data.table`] row, inherited from [`lapply_estimate_coord()`].
-#' @param map  A [`data.table`] row, inherited from [`lapply_estimate_coord()`].
-#' @param datasets A [`data.table`] row, inherited from [`lapply_estimate_coord()`].
-#' @param verbose A `logical` variable, , inherited from [`lapply_estimate_coord()`].
+#' @param sim,map,datasets,verbose Arguments inherited from [`lapply_estimate_coord()`]:
+#' * `sim` is a [`data.table`] row;
+#' * Other arguments are as described for [`lapply_estimate_coord()`];
 #' @details
-#' Default `constructors` are provided for the COA, RSP and AC particle algorithms. 
+#' The following `constructors` are built in to [`patter.workflows`]:
+#' * [`constructor_coa()`] assembles a named list of arguments for [`algorithm_coa()`];
+#' * [`constructor_rsp()`] assembles a named list of arguments for [`algorithm_rsp()`];
 #' 
 #' For [`constructor_coa()`]:
 #' * `sim` should include the following columns:
-#'      - `unit_id` 
-#'      - `delta_t`
-#'      
+#'      - `unit_id`: an integer that defines the individual/block ID;
+#'      - `delta_t`: the time interval over which to calculate centres of activity (see [`algorithm_coa()`]);
 #' * `datasets` should include the following elements:
-#'      - `detections_by_unit`
-#'      - `moorings`
+#'      - `detections_by_unit`: a `list` of acoustic detection [`data.table`]s (see [`algorithm_coa()`]) for each `unit_id`;
+#'      - `moorings`: a `moorings` data.table (see [`algorithm_coa()`]);
 #'
 #' For [`constructor_rsp()`]:
 #' * `sim` should include the following columns:
-#'      - `unit_id`
-#'      - `er.ad`
-#'      
+#'      - `unit_id`: see above;
+#'      - `er.ad`: the `er.ad` parameter (see [`algorithm_rsp()`]);
 #' * `datasets` should include the following elements:
-#'      - `detections_by_unit`
-#'      - `moorings`
-#'      - `t.layer`;
+#'      - `detections_by_unit`: see above;
+#'      - `moorings`: see above;
+#'      - `t.layer`: the transition matrix (see [`algorithm_rsp()`])
+#'      
+#' Inbuilt constructors are implemented as follows:
+#' * The dataset(s) for `sim$unit_id` (e.g., for a specific individual/time window) are extracted from `datasets` **by position** via `get_dataset_*()` functions (e.g., [`get_dataset_detections()`]);
+#' * Supported parameters (e.g., `er.ad`) are extracted from `sim` via [`get_parameter()`];
+#' * (Other parameters are left at default settings);
+#' * A named `list` of arguments, including datasets and parameters, for the relevant function (e.g., [`algorithm_coa()`]) is returned;
 #' 
-#' For particle algorithms, constructors have to be defined manually, following the same function signature. 
+#' For more control, define a custom `constructor_*()` function.
+#' 
+#' For [`algorithm_particle()`] constructors have to be defined manually, following the same function signature. 
 #' 
 #' @return `constructor_*()` functions return a named `list` of arguments for an algorithm (e.g., [`algorithm_coa()`]).
 #' @author Edward Lavender
@@ -73,16 +80,23 @@ constructor_rsp <- function(sim, map, datasets, verbose) {
 }
 
 
-#' @title Estimate coordinates: get `constructor` inputs
-#' @description These internal functions get `constructor` inputs (i.e., parameters or datasets).
+#' @title Estimate coordinates: get `algorithm` inputs
+#' @description These functions get `algorithm` inputs (i.e., parameters or datasets).
 #' @param sim,datasets Arguments inherited from `constructor` in [`estimate_coord()`].
-#' @details These functions simply extract required inputs from `sim` or `datasets` with appropriate checks.
+#' @param parameter A `character` that defines the name of a column in `sim`.
+#' @details These functions simply extract required inputs from `sim` or `datasets` with appropriate checks:
+#' * `get_dataset_*()` functions extract a `dataset` **by position** via `datasets[[sim$unit_id]]`;
+#' * `get_parameter()` functions extract a parameter value via `sim[[parameter]]`;
+#' 
+#' These functions are used in [`constructor`] functions. 
+#' 
+#' They are available to users for use in custom [`constructor`] functions.
 #' @author Edward Lavender
-#' @name get_
+#' @name get_input
 NULL
 
-#' @rdname get_
-#' @keywords internal
+#' @rdname get_input
+#' @export
 
 get_dataset_detections <- function(sim, datasets) {
   check_names(sim, "unit_id")
@@ -95,24 +109,24 @@ get_dataset_detections <- function(sim, datasets) {
   detections
 }
 
-#' @rdname get_
-#' @keywords internal
+#' @rdname get_input
+#' @export
 
 get_dataset_moorings <- function(sim, datasets) {
   check_names(datasets, "moorings")
   datasets$moorings
 }
 
-#' @rdname get_
-#' @keywords internal
+#' @rdname get_input
+#' @export
 
 get_dataset_t.layer <- function(sim, datasets) {
   check_names(datasets, "t.layer")
   datasets$t.layer
 }
 
-#' @rdname get_
-#' @keywords internal
+#' @rdname get_input
+#' @export
 
 get_parameter <- function(sim, parameter) {
   check_names(sim, parameter)

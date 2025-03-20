@@ -3,8 +3,8 @@
 #' @param iteration An iteration [`data.table`]. 
 #' * Each row corresponds to one algorithm run and is passed to `constructor()`.
 #' * Required columns depend on the `constructor()` function but generally include:
-#'    - `index` (essential): a unique identifier for each row;
-#'    - `unit_id` (generally required): a unique identifer for each unit (e.g., individual/time block);
+#'    - `index`: a unique identifier for each row;
+#'    - `unit_id`:  a unique identifer for each unit (e.g., individual/time block);
 #'    -  run-specific parameters, such as:
 #'        - `delta_t` for [`constructor_coa()`];
 #'        - `er.ad` for [`constructor_rsp()`];
@@ -18,23 +18,23 @@
 #' * For [`algorithm_rsp()`], the default constructor is [`constructor_rsp()`];
 #' * For [`algorithm_particle()`], a user-defined constructor is required;
 #' 
-#' @param algorithm An `algorithm_*()` function that estimates coordinates, such as:
+#' @param algorithm A function that estimates coordinates, such as:
 #' * [`algorithm_coa()`] for the COA algorithm;
 #' * [`algorithm_rsp()`] for the RSP algorithm;
 #' * [`algorithm_particle()`] for a particle algorithm;
 #' 
 #' @param coffee [`coffee()`] break options. 
-#' * Use `NULL` to suppress coffee breaks.
-#' * Use `list()` for default arguments.
-#' * Use a named `list` of arguments passed to [`coffee()`] to customise coffee breaks.
+#' * Use `NULL` to suppress coffee breaks;
+#' * Use `list()` for default arguments;
+#' * Use a named `list` of arguments, passed to [`coffee()`], to customise coffee breaks;
 #' 
-#' @param verbose A logical variable or a string that defines the path to a text file.
+#' @param verbose A `logical` variable or a `string` that defines the path to a text file:
 #' * `.verbose = FALSE` suppresses user outputs;
 #' * `.verbose = TRUE` sends user outputs to the console;
 #' * .`verbose = file.path("path", "to", "text", "file.txt")` sends user outputs to a `.txt` file;
 #' 
 #' @details
-#' [`lapply_estimate_coord()`] iterates over rows in `iteration` via [`cl_lapply()`] and applies the internal function [`estimate_coord()`]. [`estimate_coord()`] function accepts the `iteration` row, `map`, `datasets`, `constructor`, `algorithm` and `verbose` arguments. Using these inputs, [`estimate_coord()`]:
+#' [`lapply_estimate_coord()`] iterates over rows in `iteration` via [`cl_lapply()`] and applies the internal function [`estimate_coord()`]. [`estimate_coord()`] accepts the `iteration` row, `map`, `datasets`, `constructor`, `algorithm` and `verbose` arguments. Using these inputs, [`estimate_coord()`]:
 #' * Constructs a named `list` of arguments for an algorithm function, via a [`constructor`], given information in the supplied arguments;
 #' * Passes the arguments to an algorithm function, such as:
 #'    * [`algorithm_coa()`] for the COA algorithm;
@@ -71,7 +71,7 @@ lapply_estimate_coord <- function(iteration,
                                   datasets, 
                                   constructor,
                                   algorithm,  
-                                  coffee = list(),
+                                  coffee = NULL,
                                   verbose = TRUE
                                   ) {
   

@@ -1,4 +1,6 @@
 #' @title [`patter.workflows`]
+#' @example man/examples/example-patter.workflows.R
+#' 
 #' @name patter.workflows
 "_PACKAGE"
 
@@ -25,5 +27,6 @@
 #' @importFrom patter coa
 #' @importFrom patter pf_filter
 #' @importFrom patter pf_smoother_two_filter
+#' @importFrom patter patter_run
 
 NULL
