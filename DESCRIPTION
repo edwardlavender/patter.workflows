@@ -6,7 +6,7 @@ Authors@R:
            email = "edward.lavender@eawag.ch", 
            role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-8040-7489"))
-Description: Iterative workflows for animal-tracking analyses, with a focus on the `patter` package. The core routines provide an iterative framework for repeated applications of algorithms that estimate the positions of tagged individuals (coordinates) or patterns of space use. This facilitiates analyses of multiple individuals, time blocks and algorithm sensitivity (i.e., multiple parameters). 
+Description: Iterative workflows for animal-tracking analyses, with a focus on the `patter` package. The core routines provide an iterative framework for repeated applications of algorithms that estimate the positions of tagged individuals (coordinates) or patterns of space use. This facilitates analyses of multiple individuals, time blocks and algorithm sensitivity (i.e., multiple parameters). 
 License: MIT + file LICENSE
 Imports:
     collapse,
@@ -24,8 +24,9 @@ Suggests:
     lubridate,
     ggplot2,
     RSP,
-    testthat (>= 3.0.0)
-Remotes::
+    testthat (>= 3.0.0),
+    spelling
+Remotes: :
     github::hugomflavio/actel
     github::YuriNiella/RSP
 Depends: R (>= 4.1)

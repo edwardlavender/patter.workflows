@@ -21,7 +21,7 @@ lapply_estimate_coord(
 \item Required columns depend on the \code{constructor()} function but generally include:
 \itemize{
 \item \code{index}: a unique identifier for each row;
-\item \code{unit_id}:  a unique identifer for each unit (e.g., individual/time block);
+\item \code{unit_id}:  a unique identifier for each unit (e.g., individual/time block);
 \item run-specific parameters, such as:
 \itemize{
 \item \code{delta_t} for \code{\link[=constructor_coa]{constructor_coa()}};

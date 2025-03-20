@@ -1,7 +1,7 @@
 
 # `patter.workflows`
 
-\*\*Workflows for the `patter` `R` package
+**Iterative animal-tracking workflows**
 
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
@@ -11,7 +11,13 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 [![CRAN
 status](https://www.r-pkg.org/badges/version/patter)](https://CRAN.R-project.org/package=patter)
 
-`patter.workflows` is an extension of the `patter` `R` package.
+`patter.workflows` provides iterative workflows for animal-tracking
+analyses, with a focus on the `patter` package. The core routines
+provide an iterative framework for repeated applications of algorithms
+that estimate the positions of tagged individuals (coordinates) or
+patterns of space use. This facilitates analyses of multiple
+individuals, time blocks and algorithm sensitivity (i.e., multiple
+parameters).
 
 > **Note:** `patter.workflows` is a new `R` package. Like all new
 > packages, you should use it with a degree of caution. Please share
@@ -48,7 +54,7 @@ devtools::install_github("edwardlavender/patter",
 
 - `julia_assign_SpatRaster()`
 
-## Packackge conversion
+## Package conversion
 
 - `as_*()` functions for package-conversion routines:
   - `as_actel()`
@@ -79,7 +85,7 @@ devtools::install_github("edwardlavender/patter",
 
 ## Spatial operations
 
-- Read/write toutines:
+- Read/write routines:
 
 - `qreadvect()`, `qsavevect()`
 

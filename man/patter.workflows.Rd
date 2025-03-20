@@ -6,7 +6,7 @@
 \alias{patter.workflows}
 \title{\code{\link{patter.workflows}}}
 \description{
-Iterative workflows for animal-tracking analyses, with a focus on the `patter` package. The core routines provide an iterative framework for repeated applications of algorithms that estimate the positions of tagged individuals (coordinates) or patterns of space use. This facilitiates analyses of multiple individuals, time blocks and algorithm sensitivity (i.e., multiple parameters).
+Iterative workflows for animal-tracking analyses, with a focus on the `patter` package. The core routines provide an iterative framework for repeated applications of algorithms that estimate the positions of tagged individuals (coordinates) or patterns of space use. This facilitates analyses of multiple individuals, time blocks and algorithm sensitivity (i.e., multiple parameters).
 }
 \examples{
 # Iterative workflow examples for coordinate estimation and mapping

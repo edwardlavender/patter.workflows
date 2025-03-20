@@ -4,7 +4,7 @@
 #' * Each row corresponds to one algorithm run and is passed to `constructor()`.
 #' * Required columns depend on the `constructor()` function but generally include:
 #'    - `index`: a unique identifier for each row;
-#'    - `unit_id`:  a unique identifer for each unit (e.g., individual/time block);
+#'    - `unit_id`:  a unique identifier for each unit (e.g., individual/time block);
 #'    -  run-specific parameters, such as:
 #'        - `delta_t` for [`constructor_coa()`];
 #'        - `er.ad` for [`constructor_rsp()`];

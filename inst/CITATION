@@ -1,0 +1,23 @@
+citHeader("`patter.workflows` is based on the code base established by Lavender et al. (2025a) and (2025b). Please cite those articles in publications. Please also cite the relevant sources for individual algorithms. For example, to cite particle algorithms, see `citation('patter')`.")
+
+bibentry(
+  bibtype  = "Article",
+  title    = "Particle algorithms for animal movement modelling in receiver arrays",
+  author   = c("Edward Lavender", "Andreas Scheidegger", "Carlo Albert", "Stanisław Biber", 
+               "Janine Illian", "James Thorburn", "Sophie Smout", "Helen Moor"),
+  journal  = "Methods in Ecology and Evolution",
+  year     = "in press",
+  doi      = "10.1101/2024.09.16.613223"
+)
+
+bibentry(
+  bibtype  = "Article",
+  title    = "Animal tracking with particle algorithms for conservation",
+  author   = c("Edward Lavender", "Andreas Scheidegger", "Carlo Albert", "Stanisław W. Biber", 
+               "Jakob Brodersen", "Dmitry Aleynik", "Georgina Cole", "Jane Dodd", 
+                "Peter J. Wright", "Janine Illian", "Mark James", "Sophie Smout", 
+                "James Thorburn", "Helen Moor"),
+  journal  = "bioRxiv",
+  year     = "2025",
+  doi      = "10.1101/2025.02.13.638042"
+)
