@@ -75,6 +75,7 @@ sink_close <- function(log.txt = NULL) {
     cat_time()
     sink()
     sink(type = "message")
+    close(log.txt)
   }
   invisible(NULL)
 }

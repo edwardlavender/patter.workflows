@@ -6,10 +6,314 @@
 \alias{patter.workflows}
 \title{\code{\link{patter.workflows}}}
 \description{
-Workflows for the `patter` R package.
+Iterative workflows for animal-tracking analyses, with a focus on the `patter` package. The package provides generic routines that facilitate iterative applications of algorithms designed to estimate individual coordinates or map space use to multiple units. This facilitates analyses of multiple individuals, time blocks and algorithm sensitivity (multiple parameters).
 }
 \examples{
+# Iterative workflow examples for coordinate estimation and mapping
+# of tagged animals (in receiver arrays)
 
+library(data.table)
+library(dplyr)
+library(dtplyr, warn.conflicts = FALSE)
+library(lubridate)
+library(ggplot2)
+library(glue)
+library(patter)
+
+if (patter_run(.julia = TRUE, .geospatial = TRUE)) {
+  
+  #### ---------------------------------------------------------------------####
+  #### Workflow set up -----------------------------------------------------####
+  #### ---------------------------------------------------------------------####
+  
+  #### Load data
+  map        <- dat_gebco()
+  detections <- dat_detections
+  moorings   <- dat_moorings
+  
+  #### Set up Julia
+  julia_connect()
+  set_seed()
+  set_map(map)
+  
+  #### Define study period
+  # * For speed, we focus on a one-week timeline 
+  start <- as.POSIXct("2016-10-01 00:00:00", tz = "UTC")
+  end   <- as.POSIXct("2016-10-07 00:00:00", tz = "UTC")
+  
+  #### Define unitsets and observations
+  # We have collected acoustic detections from flapper skate
+  detections |>
+    ggplot() + 
+    geom_point(aes(timestamp, factor(individual_id)))
+  # We focus on observations within the study timeline
+  detections <- 
+    detections |> 
+    filter(timestamp \%within\% lubridate::interval(start, end)) |> 
+    as.data.table()
+  # We define a data.table with individual/block groupings of interest
+  detections[, individual_id]
+  detections[, week_id := lubridate::floor_date(timestamp, "weeks")]
+  detections[, unit_id := .GRP, by = .(individual_id, week_id)]
+  unitsets <-
+    detections |> 
+    group_by(unit_id) |> 
+    slice(1L) |> 
+    ungroup() |>
+    select(unit_id, individual_id, week_id) |> 
+    as.data.table()
+  
+  
+  #### ---------------------------------------------------------------------####
+  #### Iteratively estimate COAs -------------------------------------------####
+  #### ---------------------------------------------------------------------####
+  
+  #### Define iteration dataset
+  # Define parameters (e.g., 'best-best', 'restrictive', 'flexible')
+  # (We can use multiple settings to examine sensitivity)
+  pars <- data.table(parameter_id = 1:3L, 
+                     delta_t = c("2 days", "1 day", "3 days"))
+  # Define iteration
+  iteration <- 
+    cross_join(unitsets, pars) |> 
+    mutate(index = row_number()) |> 
+    as.data.table()
+  
+  #### Define datasets list
+  # We need a data.table of receiver locations
+  # For each unit_id, we need the corresponding detections
+  datasets <- list(moorings = moorings, 
+                   detections_by_unit = split(detections, detections$unit_id)
+  )
+  names(datasets$detections_by_unit)
+  
+  #### Example (1): Implement the COA algorithm with default options 
+  coord_coa <- lapply_estimate_coord(iteration   = iteration,
+                                     map         = map,
+                                     datasets    = datasets,
+                                     constructor = constructor_coa, 
+                                     algorithm   = algorithm_coa)
+  # The function returns a list with one element for each iteration row:
+  coord_coa
+  # Each element contains `coord` and `callstats`
+  coord_coa[[1]]
+  
+  #### Example (2): Redirect outputs to file
+  iteration[, folder_coord := file.path(tempdir(), "real", "runs", 
+                                        individual_id, week_id, parameter_id, 
+                                        "coa")]
+  dirs.create(iteration$folder_coord)
+  coord_coa <- lapply_estimate_coord(iteration   = iteration,
+                                     map         = map,
+                                     datasets    = datasets,
+                                     constructor = constructor_coa, 
+                                     algorithm   = algorithm_coa)
+  list.files(iteration$folder_coord)
+  file_cleanup(iteration$folder_coord)
+  iteration[, folder_coord := NULL]
+  
+  #### Example (3): Take coffee breaks
+  # Use a list of arguments passed to `coffee()` to force coffee breaks
+  coffee_schedule <- list(interval = 0.001, duration = 0.1)
+  coord_coa <- lapply_estimate_coord(iteration   = iteration,
+                                     map         = map,
+                                     datasets    = datasets,
+                                     constructor = constructor_coa, 
+                                     algorithm   = algorithm_coa, 
+                                     coffee      = coffee_schedule)
+  
+  #### Example (4): Use output control 
+  # Use log.txt
+  log.txt   <- tempfile(fileext = ".txt")
+  coord_coa <- lapply_estimate_coord(iteration   = iteration,
+                                     map         = map,
+                                     datasets    = datasets,
+                                     constructor = constructor_coa, 
+                                     algorithm   = algorithm_coa, 
+                                     verbose     = log.txt)
+  readLines(log.txt)
+  unlink(log.txt)
+  # Set verbose = FALSE
+  coord_coa <- lapply_estimate_coord(iteration   = iteration,
+                                     map         = map,
+                                     datasets    = datasets,
+                                     constructor = constructor_coa, 
+                                     algorithm   = algorithm_coa, 
+                                     verbose     = FALSE)
+  
+  
+  #### ---------------------------------------------------------------------####
+  #### Iteratively estimate RSPs -------------------------------------------####
+  #### ---------------------------------------------------------------------####
+  
+  #### Define iteration dataset
+  # Define parameters
+  pars <- data.table(parameter_id = 1:3L, 
+                     er.ad = c(500, 250, 750))
+  # Define iteration
+  iteration <- 
+    cross_join(unitsets, pars) |> 
+    mutate(index = row_number()) |> 
+    as.data.table()
+  
+  #### Define datasets list
+  # For each unit_id, we need the corresponding detections
+  # We need a data.table of receiver locations
+  # We also need a transition matrix of the 'ease of movement' between cells
+  datasets <- list(moorings = moorings, 
+                   detections_by_unit = split(detections, detections$unit_id), 
+                   t.layer = dat_gebco_tm())
+  
+  #### Example (1): Implement the RSP algorithm with default options 
+  coord_rsp <- lapply_estimate_coord(iteration   = iteration,
+                                     map         = map,
+                                     datasets    = datasets,
+                                     constructor = constructor_rsp, 
+                                     algorithm   = algorithm_rsp)
+  
+  # For additional features, see above examples.
+  
+  
+  #### ---------------------------------------------------------------------####
+  #### Iteratively sample particles ----------------------------------------####
+  #### ---------------------------------------------------------------------####
+  
+  #### Define iteration dataset
+  # Define movement parameters (best, restrictive, flexible)
+  pars_movement <- data.table(k = c(5, 2.5, 7.5), 
+                              theta = c(100, 50, 150), 
+                              mobility = c(1095, 985.5, 1204.5))
+  # Define detection parameters
+  pars_detection <- data.table(receiver_alpha = c(4, 3, 5),
+                               receiver_beta  = c(-0.00940, -0.01175, -0.00705),
+                               receiver_gamma = c(3000, 2250, 3750)
+  )
+  # Collect parameter combinations
+  pars <- 
+    rbind(
+      cbind(sensitivity = "best", pars_movement[1, ], pars_detection[1, ]),
+      cbind(sensitivity = "move(-)", pars_movement[2, ], pars_detection[1, ]),
+      cbind(sensitivity = "move(+)", pars_movement[3, ], pars_detection[1, ]),
+      cbind(sensitivity = "ac(-)", pars_movement[1, ], pars_detection[2, ]),
+      cbind(sensitivity = "ac(+)", pars_movement[1, ], pars_detection[3, ])
+    ) |> 
+    mutate(parameter_id = row_number()) |> 
+    as.data.table()
+  # Define iteration
+  iteration <- 
+    cross_join(unitsets, pars) |>
+    mutate(index = row_number()) |> 
+    as.data.table()
+  
+  #### Define datasets list
+  # We need a data.table of receiver locations
+  # For each unit_id, we need the corresponding detections
+  datasets <- list(moorings = moorings, 
+                   detections_by_unit = split(detections, detections$unit_id))
+  
+  #### Define custom constructor function 
+  constructor_ac <- function(sim, map, datasets, verbose) {
+    
+    # Define timeline
+    # * We could create a timeline over the following week here (given weekly time blocks)
+    # * As it is, we focus on a smaller timeline for example speed. 
+    timeline <- seq(sim$week_id, 
+                    sim$week + 2 * 24 * 60 * 60,
+                    by = "2 mins")
+    
+    # Define movement model
+    state <- "StateXY"
+    model_move <- 
+      model_move_xy(.mobility = sim$mobility,
+                    .dbn_length = glue("truncated(Cauchy({sim$k}, {sim$theta}), 
+                                      lower = 0.0, upper = {sim$mobility})"),
+                    .dbn_heading = "Uniform(-pi, pi)")
+    
+    # Assemble observations
+    # (We could also read datasets for sim$unit_id from file)
+    moorings   <- get_dataset_moorings(sim, datasets)
+    detections <- get_dataset_detections(sim, datasets)
+    acoustics  <- assemble_acoustics(.timeline = timeline, 
+                                     .detections = detections, 
+                                     .moorings = moorings)
+    yobs_fwd <- yobs_bwd <- list(ModelObsAcousticLogisTrunc = acoustics)
+    if (length(which(acoustics$obs == 1L) > 2L)) {
+      # Include containers if necessary
+      containers <- assemble_acoustics_containers(.timeline = timeline, 
+                                                  .acoustics = acoustics, 
+                                                  .mobility = sim$mobility, 
+                                                  .map = map)
+      yobs_fwd$ModelObsContainer <- containers$forward
+      yobs_bwd$ModelObsContainer <- containers$backward
+    }
+    
+    # Define arguments for forward filter run
+    # * Limit .n_particle for example speed only 
+    args_fwd <- list(.timeline   = timeline, 
+                     .state      = state,
+                     .model_move = model_move, 
+                     .yobs       = yobs_fwd, 
+                     .n_particle = 1e4L, 
+                     .direction  = "forward", 
+                     .verbose    = verbose)
+    
+    # Define arguments for backward filter run
+    args_bwd            <- args_fwd
+    args_bwd$.yobs      <- yobs_bwd
+    args_bwd$.direction <- "backward"
+    
+    # Define smoother arguments
+    # * Limit .n_sim and .n_particle for example speed only
+    args_smo <- list(.n_sim = 30L, .n_particle = 100L)
+    
+    # Checks
+    stopifnot(all(names(args_fwd) \%in\% names(formals(pf_filter))))
+    stopifnot(all(names(args_bwd) \%in\% names(formals(pf_filter))))
+    stopifnot(all(names(args_smo) \%in\% names(formals(pf_smoother_two_filter))))
+    
+    # Collate filter arguments
+    # * particle_algorithm() requires the following arguments:
+    # - `forward`
+    # - `backward`  (if smoothing desired, NULL otherwise)
+    # - `smooth`    (if smoothing desired, NULL otherwise)
+    list(forward = args_fwd, backward = args_bwd, smooth = args_smo, verbose = verbose)
+    
+  }
+  
+  #### Example (1): Run particle algorithms, writing outputs to file
+  # Write particles to file
+  iteration[, folder_coord := file.path(tempdir(), "real", "runs", 
+                                        individual_id, week_id, parameter_id, 
+                                        "patter")]
+  dirs.create(iteration$folder_coord)
+  # Implement iteration
+  set_vmap(.map = map, .mobility = pars$mobility[1])
+  coord_patter <- 
+    lapply_estimate_coord(iteration   = iteration[mobility == pars$mobility[1], ][1:5, ],
+                          map         = map,
+                          datasets    = datasets,
+                          constructor = constructor_ac, 
+                          algorithm   = algorithm_particle)
+  list.files(iteration$folder_coord)
+  file_cleanup(iteration$folder_coord)
+  iteration[, folder_coord := NULL]
+  
+  
+  #### ---------------------------------------------------------------------####
+  #### Iterative UD estimation ---------------------------------------------####
+  #### ---------------------------------------------------------------------####
+  
+  # TO DO
+  
+  
+  #### ---------------------------------------------------------------------####
+  #### Mapping -------------------------------------------------------------####
+  #### ---------------------------------------------------------------------####
+  
+  # TO DO
+  
+  
+}
 }
 \seealso{
 Useful links:

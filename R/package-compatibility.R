@@ -108,7 +108,7 @@ as_actel <- function(map, detections, moorings) {
     '
     )
   writeLines(actel.code, actel.R)
-  system(paste("Rscript", actel.R)) 
+  system2(file.path(R.home("bin"), "Rscript"), actel.R)
   readRDS(output.rds)
   
 }

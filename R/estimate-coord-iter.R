@@ -85,8 +85,8 @@ lapply_estimate_coord <- function(iteration,
     log.txt <- sink_open(log.txt = verbose)
     verbose <- TRUE
   }
-  # cats    <- cat_setup(.fun = "lapply_estimate_coord", .verbose = verbose)
-  # on.exit(eval(cats$exit, envir = cats$envir), add = TRUE)
+  cats    <- cat_setup(.fun = "lapply_estimate_coord", .verbose = verbose)
+  on.exit(eval(cats$exit, envir = cats$envir), add = TRUE)
   on.exit(sink_close(log.txt), add = TRUE)
   
   #### Process iteration
