@@ -11,7 +11,7 @@ as_actel(map, detections, moorings)
 as_glatos(detections)
 }
 \arguments{
-\item{map}{A \code{\link{SpatRaster}} that defines the study area. This is assumed to define the CRS of the coordinates in \code{moorings}.}
+\item{map}{A \code{\link[terra:SpatRaster-class]{terra::SpatRaster}} that defines the study area. This is assumed to define the CRS of the coordinates in \code{moorings}.}
 
 \item{detections, moorings}{\code{\link{patter}} \code{\link{data.table}}s.
 \itemize{

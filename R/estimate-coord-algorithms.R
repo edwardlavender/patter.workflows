@@ -49,13 +49,13 @@ algorithm_particle <- function(forward, backward, smooth, verbose) {
   fwd <- bwd <- smo <- NULL
   
   #### Implement forward filter
-  cat_do("... (1) Implementing forward filter...\n", verbose = verbose)
+  cat_do("... (1) Implementing forward filter...\n", .verbose = verbose)
   fwd <- do.call(pf_filter, forward)
   
   #### Implement backward filter 
   success <- fwd$callstats$convergence
   if (success & !is.null(backward)) {
-    cat_do("\n... (2) Implementing backward filter...\n", verbose = verbose)
+    cat_do("\n... (2) Implementing backward filter...\n", .verbose = verbose)
     backward.direction <- "backward"
     bwd                <- do.call(pf_filter, backward)
     success            <- bwd$callstats$convergence
@@ -63,7 +63,7 @@ algorithm_particle <- function(forward, backward, smooth, verbose) {
   
   #### Implement smoothing 
   if (success & !is.null(smooth)) {
-    cat_do("\n... (3) Implementing smoother...\n", verbose = verbose)
+    cat_do("\n... (3) Implementing smoother...\n", .verbose = verbose)
     smo <- do.call(pf_smoother_two_filter, smooth)
   }
   

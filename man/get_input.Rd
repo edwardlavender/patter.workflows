@@ -2,12 +2,15 @@
 % Please edit documentation in R/estimate-coord-constructors.R
 \name{get_input}
 \alias{get_input}
+\alias{get_dataset_map}
 \alias{get_dataset_detections}
 \alias{get_dataset_moorings}
 \alias{get_dataset_t.layer}
 \alias{get_parameter}
 \title{Estimate coordinates: get \code{algorithm} inputs}
 \usage{
+get_dataset_map(sim, datasets)
+
 get_dataset_detections(sim, datasets)
 
 get_dataset_moorings(sim, datasets)
@@ -17,7 +20,7 @@ get_dataset_t.layer(sim, datasets)
 get_parameter(sim, parameter)
 }
 \arguments{
-\item{sim, datasets}{Arguments inherited from \code{constructor} in \code{\link[=estimate_coord]{estimate_coord()}}.}
+\item{sim, datasets}{Arguments inherited from \code{constructor} in \code{\link[proj.lapply:workflow]{proj.lapply::workflow()}}.}
 
 \item{parameter}{A \code{character} that defines the name of a column in \code{sim}.}
 }

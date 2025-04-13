@@ -1,3 +1,0 @@
-nothing <- function() {
-  invisible(NULL)
-}

@@ -1,8 +1,8 @@
 #' @title Estimate coordinates: constructors
 #' @description `constructor` functions construct a named `list` of arguments for an algorithm implementation. 
-#' @param sim,map,datasets,verbose Arguments inherited from [`lapply_estimate_coord()`]:
+#' @param sim,datasets,verbose Arguments inherited from [`cl_lapply_workflow()`]:
 #' * `sim` is a [`data.table`] row;
-#' * Other arguments are as described for [`lapply_estimate_coord()`];
+#' * Other arguments are as described for [`cl_lapply_workflow()`];
 #' @details
 #' The following `constructors` are built in to [`patter.workflows`]:
 #' * [`constructor_coa()`] assembles a named list of arguments for [`algorithm_coa()`];
@@ -42,8 +42,9 @@
 #' @rdname constructor
 #' @export 
 
-constructor_coa <- function(sim, map, datasets, verbose) {
+constructor_coa <- function(sim, datasets, verbose) {
   # Define datasets
+  map        <- get_dataset_map(sim, datasets)
   detections <- get_dataset_detections(sim, datasets)
   moorings   <- get_dataset_moorings(sim, datasets)
   # Define parameters 
@@ -59,8 +60,9 @@ constructor_coa <- function(sim, map, datasets, verbose) {
 #' @rdname constructor
 #' @export
 
-constructor_rsp <- function(sim, map, datasets, verbose) {
+constructor_rsp <- function(sim, datasets, verbose) {
   # Define datasets
+  map        <- get_dataset_map(sim, datasets)
   detections <- get_dataset_detections(sim, datasets) 
   moorings   <- get_dataset_moorings(sim, datasets)
   act        <- as_actel(map        = map, 
@@ -82,7 +84,7 @@ constructor_rsp <- function(sim, map, datasets, verbose) {
 
 #' @title Estimate coordinates: get `algorithm` inputs
 #' @description These functions get `algorithm` inputs (i.e., parameters or datasets).
-#' @param sim,datasets Arguments inherited from `constructor` in [`estimate_coord()`].
+#' @param sim,datasets Arguments inherited from `constructor` in [`proj.lapply::workflow()`].
 #' @param parameter A `character` that defines the name of a column in `sim`.
 #' @details These functions simply extract required inputs from `sim` or `datasets` with appropriate checks:
 #' * `get_dataset_*()` functions extract a `dataset` **by position** via `datasets[[sim$unit_id]]`;
@@ -94,6 +96,14 @@ constructor_rsp <- function(sim, map, datasets, verbose) {
 #' @author Edward Lavender
 #' @name get_input
 NULL
+
+#' @rdname get_input
+#' @export
+
+get_dataset_map <- function(sim, datasets) {
+  check_names(datasets, "map")
+  datasets$map
+}
 
 #' @rdname get_input
 #' @export

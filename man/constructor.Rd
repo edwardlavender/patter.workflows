@@ -6,15 +6,15 @@
 \alias{constructor_rsp}
 \title{Estimate coordinates: constructors}
 \usage{
-constructor_coa(sim, map, datasets, verbose)
+constructor_coa(sim, datasets, verbose)
 
-constructor_rsp(sim, map, datasets, verbose)
+constructor_rsp(sim, datasets, verbose)
 }
 \arguments{
-\item{sim, map, datasets, verbose}{Arguments inherited from \code{\link[=lapply_estimate_coord]{lapply_estimate_coord()}}:
+\item{sim, datasets, verbose}{Arguments inherited from \code{\link[=cl_lapply_workflow]{cl_lapply_workflow()}}:
 \itemize{
 \item \code{sim} is a \code{\link{data.table}} row;
-\item Other arguments are as described for \code{\link[=lapply_estimate_coord]{lapply_estimate_coord()}};
+\item Other arguments are as described for \code{\link[=cl_lapply_workflow]{cl_lapply_workflow()}};
 }}
 }
 \value{

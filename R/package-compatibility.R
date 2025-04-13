@@ -1,6 +1,6 @@
 #' @title Package conversion routines
 #' @description This routines convert [`patter`] [`data.table`]s into formats used by other packages, such as `actel` (`RSP`) and `glatos`.
-#' @param map A [`SpatRaster`] that defines the study area. This is assumed to define the CRS of the coordinates in `moorings`.
+#' @param map A [`terra::SpatRaster`] that defines the study area. This is assumed to define the CRS of the coordinates in `moorings`.
 #' @param detections,moorings [`patter`] [`data.table`]s.
 #' * `detections` is a [`data.table`] of acoustic detections (see [`patter::dat_detections`]).
 #' * `moorings` is a [`data.table`] of receiver positions (see [`patter::dat_moorings`]).

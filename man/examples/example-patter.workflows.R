@@ -1,20 +1,27 @@
+#### Example workflows
 # Iterative workflow examples for coordinate estimation and mapping
 # of tagged animals (in receiver arrays)
 
+#### Load packages
+# Standard data packages
 library(data.table)
 library(dplyr)
 library(dtplyr, warn.conflicts = FALSE)
 library(lubridate)
 library(ggplot2)
 library(glue)
+# Animal-tracking packages
 library(patter)
+# Project/workflow management packages
+library(proj.lapply) # cl_lapply_workflow
+library(proj.file)   # dirs.create, dir_cleanup()
 
 if (patter_run(.julia = TRUE, .geospatial = TRUE)) {
   
   #### ---------------------------------------------------------------------####
   #### Workflow set up -----------------------------------------------------####
   #### ---------------------------------------------------------------------####
-  
+
   #### Load data
   map        <- dat_gebco()
   detections <- dat_detections
@@ -71,64 +78,60 @@ if (patter_run(.julia = TRUE, .geospatial = TRUE)) {
   #### Define datasets list
   # We need a data.table of receiver locations
   # For each unit_id, we need the corresponding detections
-  datasets <- list(moorings = moorings, 
+  datasets <- list(map = map, 
+                   moorings = moorings, 
                    detections_by_unit = split(detections, detections$unit_id)
   )
   names(datasets$detections_by_unit)
   
   #### Example (1): Implement the COA algorithm with default options 
-  coord_coa <- lapply_estimate_coord(iteration   = iteration,
-                                     map         = map,
-                                     datasets    = datasets,
-                                     constructor = constructor_coa, 
-                                     algorithm   = algorithm_coa)
+  coord_coa <- cl_lapply_workflow(iteration   = iteration,
+                                  datasets    = datasets,
+                                  constructor = constructor_coa, 
+                                  algorithm   = algorithm_coa)
   # The function returns a list with one element for each iteration row:
   coord_coa
-  # Each element contains `coord` and `callstats`
+  # Each element contains `output` and `callstats`
   coord_coa[[1]]
   
   #### Example (2): Redirect outputs to file
-  iteration[, folder_coord := file.path(tempdir(), "real", "runs", 
-                                        individual_id, week_id, parameter_id, 
-                                        "coa")]
-  dirs.create(iteration$folder_coord)
-  coord_coa <- lapply_estimate_coord(iteration   = iteration,
-                                     map         = map,
-                                     datasets    = datasets,
-                                     constructor = constructor_coa, 
-                                     algorithm   = algorithm_coa)
-  list.files(iteration$folder_coord)
-  file_cleanup(iteration$folder_coord)
-  iteration[, folder_coord := NULL]
+  iteration[, folder_output := file.path(tempdir(), "real", "runs", 
+                                         individual_id, week_id, parameter_id, 
+                                         "coa")]
+  dirs.create(iteration$folder_output)
+  coord_coa <- cl_lapply_workflow(iteration   = iteration,
+                                  datasets    = datasets,
+                                  constructor = constructor_coa, 
+                                  algorithm   = algorithm_coa)
+  list.files(iteration$folder_output)
+  dir_cleanup(iteration$folder_output)
+  iteration[, folder_output := NULL]
   
   #### Example (3): Take coffee breaks
   # Use a list of arguments passed to `coffee()` to force coffee breaks
   coffee_schedule <- list(interval = 0.001, duration = 0.1)
-  coord_coa <- lapply_estimate_coord(iteration   = iteration,
-                                     map         = map,
-                                     datasets    = datasets,
-                                     constructor = constructor_coa, 
-                                     algorithm   = algorithm_coa, 
-                                     coffee      = coffee_schedule)
+  coord_coa <- cl_lapply_workflow(iteration   = iteration,
+                                  datasets    = datasets,
+                                  constructor = constructor_coa, 
+                                  algorithm   = algorithm_coa, 
+                                  coffee      = coffee_schedule)
   
   #### Example (4): Use output control 
   # Use log.txt
   log.txt   <- tempfile(fileext = ".txt")
-  coord_coa <- lapply_estimate_coord(iteration   = iteration,
-                                     map         = map,
-                                     datasets    = datasets,
-                                     constructor = constructor_coa, 
-                                     algorithm   = algorithm_coa, 
-                                     verbose     = log.txt)
+  coord_coa <- cl_lapply_workflow(iteration   = iteration,
+                                  datasets    = datasets,
+                                  constructor = constructor_coa, 
+                                  algorithm   = algorithm_coa, 
+                                  verbose     = log.txt)
   readLines(log.txt)
   unlink(log.txt)
   # Set verbose = FALSE
-  coord_coa <- lapply_estimate_coord(iteration   = iteration,
-                                     map         = map,
-                                     datasets    = datasets,
-                                     constructor = constructor_coa, 
-                                     algorithm   = algorithm_coa, 
-                                     verbose     = FALSE)
+  coord_coa <- cl_lapply_workflow(iteration   = iteration,
+                                  datasets    = datasets,
+                                  constructor = constructor_coa, 
+                                  algorithm   = algorithm_coa, 
+                                  verbose     = FALSE)
   
   
   #### ---------------------------------------------------------------------####
@@ -149,16 +152,16 @@ if (patter_run(.julia = TRUE, .geospatial = TRUE)) {
   # For each unit_id, we need the corresponding detections
   # We need a data.table of receiver locations
   # We also need a transition matrix of the 'ease of movement' between cells
-  datasets <- list(moorings = moorings, 
+  datasets <- list(map = map, 
+                   moorings = moorings, 
                    detections_by_unit = split(detections, detections$unit_id), 
                    t.layer = dat_gebco_tm())
   
   #### Example (1): Implement the RSP algorithm with default options 
-  coord_rsp <- lapply_estimate_coord(iteration   = iteration,
-                                     map         = map,
-                                     datasets    = datasets,
-                                     constructor = constructor_rsp, 
-                                     algorithm   = algorithm_rsp)
+  coord_rsp <- cl_lapply_workflow(iteration   = iteration,
+                                  datasets    = datasets,
+                                  constructor = constructor_rsp, 
+                                  algorithm   = algorithm_rsp)
   
   # For additional features, see above examples.
   
@@ -197,11 +200,12 @@ if (patter_run(.julia = TRUE, .geospatial = TRUE)) {
   #### Define datasets list
   # We need a data.table of receiver locations
   # For each unit_id, we need the corresponding detections
-  datasets <- list(moorings = moorings, 
+  datasets <- list(map = map, 
+                   moorings = moorings, 
                    detections_by_unit = split(detections, detections$unit_id))
   
   #### Define custom constructor function 
-  constructor_ac <- function(sim, map, datasets, verbose) {
+  constructor_ac <- function(sim, datasets, verbose) {
     
     # Define timeline
     # * We could create a timeline over the following week here (given weekly time blocks)
@@ -271,21 +275,20 @@ if (patter_run(.julia = TRUE, .geospatial = TRUE)) {
   
   #### Example (1): Run particle algorithms, writing outputs to file
   # Write particles to file
-  iteration[, folder_coord := file.path(tempdir(), "real", "runs", 
-                                        individual_id, week_id, parameter_id, 
-                                        "patter")]
-  dirs.create(iteration$folder_coord)
+  iteration[, folder_output := file.path(tempdir(), "real", "runs", 
+                                         individual_id, week_id, parameter_id, 
+                                         "patter")]
+  dirs.create(iteration$folder_output)
   # Implement iteration
   set_vmap(.map = map, .mobility = pars$mobility[1])
   coord_patter <- 
-    lapply_estimate_coord(iteration   = iteration[mobility == pars$mobility[1], ][1:5, ],
-                          map         = map,
-                          datasets    = datasets,
-                          constructor = constructor_ac, 
-                          algorithm   = algorithm_particle)
-  list.files(iteration$folder_coord)
-  file_cleanup(iteration$folder_coord)
-  iteration[, folder_coord := NULL]
+    cl_lapply_workflow(iteration   = iteration[mobility == pars$mobility[1], ][1:5, ],
+                       datasets    = datasets,
+                       constructor = constructor_ac, 
+                       algorithm   = algorithm_particle)
+  list.files(iteration$folder_output)
+  file_cleanup(iteration$folder_output)
+  iteration[, folder_output := NULL]
   
   
   #### ---------------------------------------------------------------------####

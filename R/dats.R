@@ -5,7 +5,6 @@
 #' @author Edward Lavender
 #' @export
 
-
 dat_gebco_tm <- function() {
   data <- system.file("extdata", "dat_gebco_tm.rds", 
                       package = "patter.workflows", mustWork = TRUE) 

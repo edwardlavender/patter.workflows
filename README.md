@@ -13,7 +13,9 @@ status](https://www.r-pkg.org/badges/version/patter)](https://CRAN.R-project.org
 
 `patter.workflows` provides iterative workflows for animal-tracking
 analyses, with a focus on the
-[`patter`](https://github.com/edwardlavender/patter) package. The core
+[`patter`](https://github.com/edwardlavender/patter) package. This is
+built around the
+[`proj.verse`](https://github.com/edwardlavender/proj.verse). The core
 routines provide an iterative framework for repeated applications of
 algorithms that estimate the positions of tagged individuals
 (coordinates) or patterns of space use. This facilitates analyses of
@@ -22,7 +24,7 @@ multiple parameters). Routines handle the iteration, parallelisation and
 errors, and record both algorithm outputs and call statistics (such as
 computation time). Outputs can be saved in memory or written to disk,
 depending on memory requirements. These routines were motivated by the
-iterative analyses in Lavender et al. (2024) and (2025).
+iterative analyses in Lavender et al. (2024a) and (2025).
 
 > **Note:** `patter.workflows` is a new `R` package. Like all new
 > packages, you should use it with a degree of caution. Please share
@@ -38,19 +40,21 @@ iterative analyses in Lavender et al. (2024) and (2025).
 
 ``` r
 install.packages(c("devtools", "rmarkdown"))
-devtools::install_github("edwardlavender/patter", 
+devtools::install_github("edwardlavender/patter.workflows", 
                          dependencies = TRUE, 
                          build_vignettes = rmarkdown::pandoc_available())
 ```
+
+3.  **For examples**, see `?example-patter.workflows`.
 
 # Functionality
 
 ## Coordinate estimation
 
-**`lapply_estimate_coord()`** is a core function that iteratively
-estimates coordinates using selected algorithms. To implement this
-function, provide an `algorithm_*()` function and a `constructor_*()`
-function that constructs a named list of arguments for `algorithm_*()`.
+**`patter.workflows` leverages `proj.lapply::cl_lapply_workflow()`** to
+implement `algorithm` workflows iteratively. To implement this function,
+provide an `algorithm_*()` function and a `constructor_*()` function
+that constructs a named list of arguments for `algorithm_*()`.
 
 The following `algorithm` functions are provided:
 
@@ -84,15 +88,9 @@ packages is provided by `as_*()` functions:
   datasets to
   [`glatos`](https://github.com/ocean-tracking-network/glatos) format;
 
-## UD estimation
+## Mapping
 
 TO DO
-
-- `lapply_estimate_ud_*()` functions to estimate utilisation
-  distributions:
-  - `lapply_estimate_ud_pou()`
-  - `lapply_estimate_ud_spatstat()`
-  - `lapply_estimate_ud_dbbmm()`
 
 ## Visualisation
 
@@ -109,52 +107,24 @@ TO DO
 
 - Use `ggmaps()` to map patterns of space use for multiple units;
 
-## Spatial operations
-
-`patter.workflow` also makes a series of spatial helpers available for
-custom workflows.
-
-For reading/writing spatial vector data with
-[`terra`](https://github.com/rspatial/terra) via
-[`qs`](https://github.com/qsbase/qs), see `q*()` functions:
-
-- Use `qreadvect()`/`qsavevect()` to read/write `SpatVector`s;
-- Use `qreadext()`/`qsaveext()` to read/write `SpatExtent`s
-
-For [`terra`](https://github.com/rspatial/terra) `SpatRaster` routines,
-see `map_*()` functions:
-
-- Use `map_ram()` to read a `SpatRaster` into memory;
-- Use `map_normalise()` to normalise a `SpatRaster`;
-- Use `map_bbox()` to get the boundary box;
-
-To compute distances, see `dist_*()` functions:
-
-- Use `dist_along_path()` to compute distances along a trajectory;
-
-## Project management
-
-`dir_*()` helpers support project management:
-
-- Use `dirs.create()` to create directories;
-- Use `dirs.copy()` copy directories and their contents;
-
 # Examples
 
 For package examples, see `?patter.workflows`.
 
+# Disclaimer and troubleshooting
+
+`patter.workflows` is a new `R` package. All routines are experimental.
+Researchers interested in using the package are encouraged to get in
+touch while the methods and package remain at an early stage of
+evolution (<edward.lavender@eawag.ch>).
+
 # Citation
 
-To cite `patter.workflows` in publications, please use:
+**To cite `patter.workflows` in publications**, please follow the
+guidance for [`patter`](https://github.com/edwardlavender/patter).
 
-- Lavender, E. et al. (2024). Particle algorithms for animal movement
-  modelling in receiver arrays. bioRxiv.
-  <https://doi.org/10.1101/2024.09.16.613223>.
-- Lavender, E. et al. (2024). `patter`: particle algorithms for animal
-  tracking in `R` and `Julia`. bioRxiv.
-  <https://doi.org/10.1101/2024.07.30.605733>
-- Lavender, E. et al. (2025). Animal tracking with particle algorithms
-  for conservation. bioRxiv. <https://doi.org/10.1101/2025.02.13.638042>
+**Thank you for citing the package.** Your citations help to justify
+continued investments in its development.
 
 ## Code of Conduct
 
