@@ -21,6 +21,8 @@
 #' @importFrom patter coa
 #' @importFrom patter pf_filter
 #' @importFrom patter pf_smoother_two_filter
+#' @importFrom patter map_pou
+#' @importFrom patter map_dens
 #' @importFrom patter patter_run
 #'
 #' @importFrom proj.build abort
@@ -30,5 +32,7 @@
 #' @importFrom proj.lapply coffee
 #' 
 #' @importFrom rlang .data
+#' 
+#' @importFrom spatial.extensions spatNormalise
 
 NULL

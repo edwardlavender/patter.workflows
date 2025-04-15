@@ -22,24 +22,24 @@
 #'    * `smooth` holds the outputs from the two-filter smoother ([`pf_smoother_two_filter()`]) or is `NULL` if this routine was not implemented;
 #'        
 #' @author Edward Lavender
-#' @name algorithm
+#' @name estimate_coord
 NULL
 
-#' @rdname algorithm
+#' @rdname estimate_coord
 #' @export
 
 estimate_coord_coa <- function(...) {
   patter::coa(...)
 }
 
-#' @rdname algorithm
+#' @rdname estimate_coord
 #' @export
 
 estimate_coord_rsp <- function(...) {
   RSP::runRSP(...) 
 }
 
-#' @rdname algorithm
+#' @rdname estimate_coord
 #' @export
 
 estimate_coord_particle <- function(forward, backward, smooth, verbose) {

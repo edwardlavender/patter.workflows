@@ -1,5 +1,5 @@
 #' @title Estimate coordinates: constructors
-#' @description `constructor` functions construct a named `list` of arguments for an algorithm implementation. 
+#' @description `estimate_coord_*()` `constructor` functions construct a named `list` of arguments for an `estimate_coord_*()` function. 
 #' @param sim,datasets,verbose Arguments inherited from [`cl_lapply_workflow()`]:
 #' * `sim` is a [`data.table`] row;
 #' * Other arguments are as described for [`cl_lapply_workflow()`];
@@ -37,9 +37,9 @@
 #' 
 #' @return `constructor_*()` functions return a named `list` of arguments for an algorithm (e.g., [`estimate_coord_coa()`]).
 #' @author Edward Lavender
-#' @name constructor
+#' @name estimate_coord-constructor
 
-#' @rdname constructor
+#' @rdname estimate_coord-constructor
 #' @export 
 
 constructor_coa <- function(sim, datasets, verbose) {
@@ -57,7 +57,7 @@ constructor_coa <- function(sim, datasets, verbose) {
        .plot_weights = FALSE)
 }
 
-#' @rdname constructor
+#' @rdname estimate_coord-constructor
 #' @export
 
 constructor_rsp <- function(sim, datasets, verbose) {
