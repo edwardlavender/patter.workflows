@@ -58,18 +58,18 @@ that constructs a named list of arguments for `algorithm_*()`.
 
 The following `algorithm` functions are provided:
 
-- Use `algorithm_coa()` to implement the COA algorithm. This wraps
+- Use `estimate_coord_coa()` to implement the COA algorithm. This wraps
   `patter::coa()`;
-- Use `algorithm_rsp()` to implement the RSP algorithm. This wraps
+- Use `estimate_coord_rsp()` to implement the RSP algorithm. This wraps
   `RSP::runRSP()`;
-- Use `algorithm_particle()` to implement a particle algorithm. This
+- Use `estimate_coord_particle()` to implement a particle algorithm. This
   wraps `patter::pf_filter()` and `pf_smoother_two_filter()`;
 
 These functions are supported by in-built `constructor_*()` functions:
 
-- For `algorithm_coa()`, use `constructor_coa()`;
-- For `algorithm_rsp()`, use `constructor_rsp()`;
-- For `algorithm_particle()`, a custom `constructor_*()` function is
+- For `estimate_coord_coa()`, use `constructor_coa()`;
+- For `estimate_coord_rsp()`, use `constructor_rsp()`;
+- For `estimate_coord_particle()`, a custom `constructor_*()` function is
   required;
 
 For custom `constructor_*()` functions, ancillary helpers are available:

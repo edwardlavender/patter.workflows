@@ -2,25 +2,25 @@
 % Please edit documentation in R/estimate-coord-algorithms.R
 \name{algorithm}
 \alias{algorithm}
-\alias{algorithm_coa}
-\alias{algorithm_rsp}
-\alias{algorithm_particle}
+\alias{estimate_coord_coa}
+\alias{estimate_coord_rsp}
+\alias{estimate_coord_particle}
 \title{Estimate coordinates: algorithms}
 \usage{
-algorithm_coa(...)
+estimate_coord_coa(...)
 
-algorithm_rsp(...)
+estimate_coord_rsp(...)
 
-algorithm_particle(forward, backward, smooth, verbose)
+estimate_coord_particle(forward, backward, smooth, verbose)
 }
 \arguments{
 \item{...}{Arguments for algorithms defined in other packages:
 \itemize{
-\item For \code{\link{algorithm_coa}}, \code{...} is passed directly to \code{\link[patter:coa]{patter::coa()}};
-\item For \code{\link{algorithm_rsp}}, \code{...} is passed directly to \code{\link[RSP:runRSP]{RSP::runRSP()}};
+\item For \code{\link{estimate_coord_coa}}, \code{...} is passed directly to \code{\link[patter:coa]{patter::coa()}};
+\item For \code{\link{estimate_coord_rsp}}, \code{...} is passed directly to \code{\link[RSP:runRSP]{RSP::runRSP()}};
 }}
 
-\item{forward, backward, smooth, verbose}{Arguments for \code{\link[=algorithm_particle]{algorithm_particle()}}:
+\item{forward, backward, smooth, verbose}{Arguments for \code{\link[=estimate_coord_particle]{estimate_coord_particle()}}:
 \itemize{
 \item \code{forward} is a named \code{list} of arguments for the forward particle filter (\code{\link[=pf_filter]{pf_filter()}});
 \item \code{backward} is a named \code{list} of arguments for the backward particle filter (\code{\link[=pf_filter]{pf_filter()}});
@@ -34,9 +34,9 @@ Use \code{backward = NULL} and \code{smooth = NULL} to suppress smoothing (and o
 \value{
 All functions return estimated coordinates in function-specific formats:
 \itemize{
-\item For \code{\link[=algorithm_coa]{algorithm_coa()}}, see \code{\link[patter:coa]{patter::coa()}};
-\item For \code{\link[=algorithm_rsp]{algorithm_rsp()}}, see \code{\link[RSP:runRSP]{RSP::runRSP()}};
-\item For \code{\link[=algorithm_particle]{algorithm_particle()}}, a \code{named} list with three elements is returned:
+\item For \code{\link[=estimate_coord_coa]{estimate_coord_coa()}}, see \code{\link[patter:coa]{patter::coa()}};
+\item For \code{\link[=estimate_coord_rsp]{estimate_coord_rsp()}}, see \code{\link[RSP:runRSP]{RSP::runRSP()}};
+\item For \code{\link[=estimate_coord_particle]{estimate_coord_particle()}}, a \code{named} list with three elements is returned:
 \itemize{
 \item \code{forward} holds the outputs from the forward particle filter (\code{\link[=pf_filter]{pf_filter()}});
 \item \code{backward} holds the outputs from the backward particle filter (\code{\link[=pf_filter]{pf_filter()}}) or is \code{NULL} if this routine was not implemented;

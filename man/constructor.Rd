@@ -18,7 +18,7 @@ constructor_rsp(sim, datasets, verbose)
 }}
 }
 \value{
-\verb{constructor_*()} functions return a named \code{list} of arguments for an algorithm (e.g., \code{\link[=algorithm_coa]{algorithm_coa()}}).
+\verb{constructor_*()} functions return a named \code{list} of arguments for an algorithm (e.g., \code{\link[=estimate_coord_coa]{estimate_coord_coa()}}).
 }
 \description{
 \code{constructor} functions construct a named \code{list} of arguments for an algorithm implementation.
@@ -26,8 +26,8 @@ constructor_rsp(sim, datasets, verbose)
 \details{
 The following \code{constructors} are built in to \code{\link{patter.workflows}}:
 \itemize{
-\item \code{\link[=constructor_coa]{constructor_coa()}} assembles a named list of arguments for \code{\link[=algorithm_coa]{algorithm_coa()}};
-\item \code{\link[=constructor_rsp]{constructor_rsp()}} assembles a named list of arguments for \code{\link[=algorithm_rsp]{algorithm_rsp()}};
+\item \code{\link[=constructor_coa]{constructor_coa()}} assembles a named list of arguments for \code{\link[=estimate_coord_coa]{estimate_coord_coa()}};
+\item \code{\link[=constructor_rsp]{constructor_rsp()}} assembles a named list of arguments for \code{\link[=estimate_coord_rsp]{estimate_coord_rsp()}};
 }
 
 For \code{\link[=constructor_coa]{constructor_coa()}}:
@@ -35,12 +35,12 @@ For \code{\link[=constructor_coa]{constructor_coa()}}:
 \item \code{sim} should include the following columns:
 \itemize{
 \item \code{unit_id}: an integer that defines the individual/block ID;
-\item \code{delta_t}: the time interval over which to calculate centres of activity (see \code{\link[=algorithm_coa]{algorithm_coa()}});
+\item \code{delta_t}: the time interval over which to calculate centres of activity (see \code{\link[=estimate_coord_coa]{estimate_coord_coa()}});
 }
 \item \code{datasets} should include the following elements:
 \itemize{
-\item \code{detections_by_unit}: a \code{list} of acoustic detection \code{\link{data.table}}s (see \code{\link[=algorithm_coa]{algorithm_coa()}}) for each \code{unit_id};
-\item \code{moorings}: a \code{moorings} data.table (see \code{\link[=algorithm_coa]{algorithm_coa()}});
+\item \code{detections_by_unit}: a \code{list} of acoustic detection \code{\link{data.table}}s (see \code{\link[=estimate_coord_coa]{estimate_coord_coa()}}) for each \code{unit_id};
+\item \code{moorings}: a \code{moorings} data.table (see \code{\link[=estimate_coord_coa]{estimate_coord_coa()}});
 }
 }
 
@@ -49,13 +49,13 @@ For \code{\link[=constructor_rsp]{constructor_rsp()}}:
 \item \code{sim} should include the following columns:
 \itemize{
 \item \code{unit_id}: see above;
-\item \code{er.ad}: the \code{er.ad} parameter (see \code{\link[=algorithm_rsp]{algorithm_rsp()}});
+\item \code{er.ad}: the \code{er.ad} parameter (see \code{\link[=estimate_coord_rsp]{estimate_coord_rsp()}});
 }
 \item \code{datasets} should include the following elements:
 \itemize{
 \item \code{detections_by_unit}: see above;
 \item \code{moorings}: see above;
-\item \code{t.layer}: the transition matrix (see \code{\link[=algorithm_rsp]{algorithm_rsp()}})
+\item \code{t.layer}: the transition matrix (see \code{\link[=estimate_coord_rsp]{estimate_coord_rsp()}})
 }
 }
 
@@ -64,12 +64,12 @@ Inbuilt constructors are implemented as follows:
 \item The dataset(s) for \code{sim$unit_id} (e.g., for a specific individual/time window) are extracted from \code{datasets} \strong{by position} via \verb{get_dataset_*()} functions (e.g., \code{\link[=get_dataset_detections]{get_dataset_detections()}});
 \item Supported parameters (e.g., \code{er.ad}) are extracted from \code{sim} via \code{\link[=get_parameter]{get_parameter()}};
 \item (Other parameters are left at default settings);
-\item A named \code{list} of arguments, including datasets and parameters, for the relevant function (e.g., \code{\link[=algorithm_coa]{algorithm_coa()}}) is returned;
+\item A named \code{list} of arguments, including datasets and parameters, for the relevant function (e.g., \code{\link[=estimate_coord_coa]{estimate_coord_coa()}}) is returned;
 }
 
 For more control, define a custom \verb{constructor_*()} function.
 
-For \code{\link[=algorithm_particle]{algorithm_particle()}} constructors have to be defined manually, following the same function signature.
+For \code{\link[=estimate_coord_particle]{estimate_coord_particle()}} constructors have to be defined manually, following the same function signature.
 }
 \author{
 Edward Lavender

@@ -88,7 +88,7 @@ if (patter_run(.julia = TRUE, .geospatial = TRUE)) {
   coord_coa <- cl_lapply_workflow(iteration   = iteration,
                                   datasets    = datasets,
                                   constructor = constructor_coa, 
-                                  algorithm   = algorithm_coa)
+                                  algorithm   = estimate_coord_coa)
   # The function returns a list with one element for each iteration row:
   coord_coa
   # Each element contains `output` and `callstats`
@@ -98,14 +98,16 @@ if (patter_run(.julia = TRUE, .geospatial = TRUE)) {
   iteration[, folder_output := file.path(tempdir(), "real", "runs", 
                                          individual_id, week_id, parameter_id, 
                                          "coa")]
+  iteration[, file_output := file.path(folder_output, "coord.qs")]
   dirs.create(iteration$folder_output)
   coord_coa <- cl_lapply_workflow(iteration   = iteration,
                                   datasets    = datasets,
                                   constructor = constructor_coa, 
-                                  algorithm   = algorithm_coa)
+                                  algorithm   = estimate_coord_coa)
   list.files(iteration$folder_output)
   dir_cleanup(iteration$folder_output)
   iteration[, folder_output := NULL]
+  iteration[, file_output := NULL]
   
   #### Example (3): Take coffee breaks
   # Use a list of arguments passed to `coffee()` to force coffee breaks
@@ -113,7 +115,7 @@ if (patter_run(.julia = TRUE, .geospatial = TRUE)) {
   coord_coa <- cl_lapply_workflow(iteration   = iteration,
                                   datasets    = datasets,
                                   constructor = constructor_coa, 
-                                  algorithm   = algorithm_coa, 
+                                  algorithm   = estimate_coord_coa, 
                                   coffee      = coffee_schedule)
   
   #### Example (4): Use output control 
@@ -122,7 +124,7 @@ if (patter_run(.julia = TRUE, .geospatial = TRUE)) {
   coord_coa <- cl_lapply_workflow(iteration   = iteration,
                                   datasets    = datasets,
                                   constructor = constructor_coa, 
-                                  algorithm   = algorithm_coa, 
+                                  algorithm   = estimate_coord_coa, 
                                   verbose     = log.txt)
   readLines(log.txt)
   unlink(log.txt)
@@ -130,7 +132,7 @@ if (patter_run(.julia = TRUE, .geospatial = TRUE)) {
   coord_coa <- cl_lapply_workflow(iteration   = iteration,
                                   datasets    = datasets,
                                   constructor = constructor_coa, 
-                                  algorithm   = algorithm_coa, 
+                                  algorithm   = estimate_coord_coa, 
                                   verbose     = FALSE)
   
   
@@ -161,7 +163,7 @@ if (patter_run(.julia = TRUE, .geospatial = TRUE)) {
   coord_rsp <- cl_lapply_workflow(iteration   = iteration,
                                   datasets    = datasets,
                                   constructor = constructor_rsp, 
-                                  algorithm   = algorithm_rsp)
+                                  algorithm   = estimate_coord_rsp)
   
   # For additional features, see above examples.
   
@@ -278,6 +280,7 @@ if (patter_run(.julia = TRUE, .geospatial = TRUE)) {
   iteration[, folder_output := file.path(tempdir(), "real", "runs", 
                                          individual_id, week_id, parameter_id, 
                                          "patter")]
+  iteration[, file_output := file.path(folder_output, "coord.qs")]
   dirs.create(iteration$folder_output)
   # Implement iteration
   set_vmap(.map = map, .mobility = pars$mobility[1])
@@ -285,10 +288,11 @@ if (patter_run(.julia = TRUE, .geospatial = TRUE)) {
     cl_lapply_workflow(iteration   = iteration[mobility == pars$mobility[1], ][1:5, ],
                        datasets    = datasets,
                        constructor = constructor_ac, 
-                       algorithm   = algorithm_particle)
+                       algorithm   = estimate_coord_particle)
   list.files(iteration$folder_output)
   file_cleanup(iteration$folder_output)
   iteration[, folder_output := NULL]
+  iteration[, file_output := NULL]
   
   
   #### ---------------------------------------------------------------------####

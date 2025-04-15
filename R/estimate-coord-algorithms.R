@@ -1,9 +1,9 @@
 #' @title Estimate coordinates: algorithms
 #' @description These functions implement algorithms that estimate coordinates.
 #' @param ... Arguments for algorithms defined in other packages:
-#' * For [`algorithm_coa`], `...` is passed directly to [`patter::coa()`];
-#' * For [`algorithm_rsp`], `...` is passed directly to [`RSP::runRSP()`];
-#' @param forward,backward,smooth,verbose Arguments for [`algorithm_particle()`]:
+#' * For [`estimate_coord_coa`], `...` is passed directly to [`patter::coa()`];
+#' * For [`estimate_coord_rsp`], `...` is passed directly to [`RSP::runRSP()`];
+#' @param forward,backward,smooth,verbose Arguments for [`estimate_coord_particle()`]:
 #' * `forward` is a named `list` of arguments for the forward particle filter ([`pf_filter()`]);
 #' * `backward` is a named `list` of arguments for the backward particle filter ([`pf_filter()`]);
 #' * `smooth` is a named `list` of arguments for the two-filter smoother ([`pf_smoother_two_filter()`]);
@@ -14,9 +14,9 @@
 #' 
 #' @return
 #' All functions return estimated coordinates in function-specific formats:
-#' * For [`algorithm_coa()`], see [`patter::coa()`];
-#' * For [`algorithm_rsp()`], see [`RSP::runRSP()`];
-#' * For [`algorithm_particle()`], a `named` list with three elements is returned:
+#' * For [`estimate_coord_coa()`], see [`patter::coa()`];
+#' * For [`estimate_coord_rsp()`], see [`RSP::runRSP()`];
+#' * For [`estimate_coord_particle()`], a `named` list with three elements is returned:
 #'    * `forward` holds the outputs from the forward particle filter ([`pf_filter()`]);
 #'    * `backward` holds the outputs from the backward particle filter ([`pf_filter()`]) or is `NULL` if this routine was not implemented;
 #'    * `smooth` holds the outputs from the two-filter smoother ([`pf_smoother_two_filter()`]) or is `NULL` if this routine was not implemented;
@@ -28,21 +28,21 @@ NULL
 #' @rdname algorithm
 #' @export
 
-algorithm_coa <- function(...) {
+estimate_coord_coa <- function(...) {
   patter::coa(...)
 }
 
 #' @rdname algorithm
 #' @export
 
-algorithm_rsp <- function(...) {
+estimate_coord_rsp <- function(...) {
   RSP::runRSP(...) 
 }
 
 #' @rdname algorithm
 #' @export
 
-algorithm_particle <- function(forward, backward, smooth, verbose) {
+estimate_coord_particle <- function(forward, backward, smooth, verbose) {
   
   #### Initialise
   coffee()
