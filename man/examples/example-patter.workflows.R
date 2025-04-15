@@ -111,7 +111,8 @@ dirs.create(iteration$folder_pou)
 
 ## (A) Estimate coordinates
 # Define datasets list to estimate coordinates
-# * We need a data.table of receiver locations
+# * map
+# * A data.table of receiver locations
 # * For each unit_id, we need the corresponding detections
 dcoord <- list(map = map, 
                moorings = moorings, 
@@ -206,28 +207,29 @@ dirs.create(iteration$folder_pou)
 #### Example (1): Compute coordinates and maps in memory 
 
 ## (A) Estimate coordinates
-# Define datasets list to estimate coordinates
-# For each unit_id, we need the corresponding detections
-# We need a data.table of receiver locations
-# We also need a transition matrix of the 'ease of movement' between cells
+# Define data list 
+# * NB: We also need a transition matrix of the 'ease of movement' between cells
 dcoord <- list(map = map, 
                moorings = moorings, 
-               detections_by_unit = split(detections, detections$unit_id), 
-               t.layer = dat_gebco_tm())
+               detections_by_unit = split(detections, detections$unit_id))
 # Estimate coordinates
 coord_list <- cl_lapply_workflow(iteration   = iteration,
                                  datasets    = dcoord,
                                  constructor = constructor_rsp, 
-                                 algorithm   = estimate_coord_rsp)
+                                 algorithm   = estimate_coord_rsp, 
+                                 t.layer     = dat_gebco_tm())
 
 ## (B) Estimate maps (and save in memory)
 map_ll   <- map |> terra::project("EPSG:4326")
 water_ll <- terra::mask(terra::setValues(map_ll, TRUE), map_ll)
-dpou     <- list(map = map, coord = coord_list, base.raster = water_ll, UTM = 29)
+dpou     <- list(map = map, coord = coord_list)
 pou_list <- cl_lapply_workflow(iteration   = iteration,
                                datasets    = dpou,
                                constructor = constructor_map_dbbmm, 
-                               algorithm   = estimate_map_dbbmm)
+                               algorithm   = estimate_map_dbbmm, 
+                               # 'static' arguments:
+                               base.raster = water_ll, 
+                               UTM = 29)
 
 # For other examples, see above.
 
@@ -268,15 +270,10 @@ iteration <-
 dirs.create(iteration$folder_coord)
 dirs.create(iteration$folder_pou)
 
-#### Define datasets list
-# We need a data.table of receiver locations
-# For each unit_id, we need the corresponding detections
-datasets <- list(map = map, 
-                 moorings = moorings, 
-                 detections_by_unit = split(detections, detections$unit_id))
-
-#### Define custom constructor function 
-constructor_ac <- function(sim, datasets, verbose) {
+#### Define custom estimate_coord constructor function 
+constructor_ac <- function(sim, datasets, verbose, ...) {
+  
+  stopifnot(length(list(...)) == 0L)
   
   # Define timeline
   # * We could create a timeline over the following week here (given weekly time blocks)
@@ -344,11 +341,18 @@ constructor_ac <- function(sim, datasets, verbose) {
   
 }
 
-## (A) Write coordinates to file
+## (A) Estimate coordinates (writing to file)
+# Define datasets 
+datasets <- list(map = map, 
+                 moorings = moorings, 
+                 detections_by_unit = split(detections, detections$unit_id))
+# Select iterations 
+iteration <- iteration[mobility == pars$mobility[1], ][1:5L, ]
 iteration[, file_output := file.path(folder_coord, "coord.qs")]
 set_vmap(.map = map, .mobility = pars$mobility[1])
+# Estimate coordinates
 coord_list <- 
-  cl_lapply_workflow(iteration   = iteration[mobility == pars$mobility[1], ][1:5L, ],
+  cl_lapply_workflow(iteration   = iteration,
                      datasets    = datasets,
                      constructor = constructor_ac, 
                      algorithm   = estimate_coord_particle)

@@ -10,7 +10,6 @@
 #'    * [`get_dataset_map()`] extracts `datasets$map`
 #'    * [`get_dataset_detections()`] extracts `datasets$detections_by_unit[[sim$unit_id]]`
 #'    * [`get_dataset_moorings()`] extracts `datasets$moorings`
-#'    * [`get_dataset_t.layer()`] extracts `datasets$t.layer`
 #'    
 #' The following functions are designed to support `estimate_map` constructors:
 #' 
@@ -55,14 +54,6 @@ get_dataset_detections <- function(sim, datasets) {
 get_dataset_moorings <- function(sim, datasets) {
   check_names(datasets, "moorings")
   datasets$moorings
-}
-
-#' @rdname get_input
-#' @export
-
-get_dataset_t.layer <- function(sim, datasets) {
-  check_names(datasets, "t.layer")
-  datasets$t.layer
 }
 
 #' @rdname get_input

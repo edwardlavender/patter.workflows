@@ -5,7 +5,6 @@
 \alias{get_dataset_map}
 \alias{get_dataset_detections}
 \alias{get_dataset_moorings}
-\alias{get_dataset_t.layer}
 \alias{get_dataset_coord}
 \alias{get_parameter}
 \title{Estimate coordinates: get \code{algorithm} inputs}
@@ -15,8 +14,6 @@ get_dataset_map(sim, datasets)
 get_dataset_detections(sim, datasets)
 
 get_dataset_moorings(sim, datasets)
-
-get_dataset_t.layer(sim, datasets)
 
 get_dataset_coord(sim, datasets)
 
@@ -40,7 +37,6 @@ The following functions are designed to support \code{estimate_coord} constructo
 \item \code{\link[=get_dataset_map]{get_dataset_map()}} extracts \code{datasets$map}
 \item \code{\link[=get_dataset_detections]{get_dataset_detections()}} extracts \code{datasets$detections_by_unit[[sim$unit_id]]}
 \item \code{\link[=get_dataset_moorings]{get_dataset_moorings()}} extracts \code{datasets$moorings}
-\item \code{\link[=get_dataset_t.layer]{get_dataset_t.layer()}} extracts \code{datasets$t.layer}
 }
 
 The following functions are designed to support \code{estimate_map} constructors:

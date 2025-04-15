@@ -28,6 +28,7 @@
 #' @importFrom proj.build abort
 #' @importFrom proj.build cat_do
 #' @importFrom proj.build check_names
+#' @importFrom proj.build list_merge
 #' @importFrom proj.build nothing
 #' @importFrom proj.lapply coffee
 #' 
