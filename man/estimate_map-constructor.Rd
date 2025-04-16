@@ -7,14 +7,14 @@
 \alias{constructor_map_dbbmm}
 \title{Estimate map: constructors}
 \usage{
-constructor_map_pou(sim, datasets, verbose, ...)
+constructor_map_pou(.sim, .datasets, .verbose, ...)
 
-constructor_map_dens(sim, datasets, verbose, ...)
+constructor_map_dens(.sim, .datasets, .verbose, ...)
 
-constructor_map_dbbmm(sim, datasets, verbose, ...)
+constructor_map_dbbmm(.sim, .datasets, .verbose, ...)
 }
 \arguments{
-\item{sim, datasets, verbose, ...}{Constructor arguments (see \code{\link{estimate_coord-constructor}}).}
+\item{.sim, .datasets, .verbose, ...}{Constructor arguments (see \code{\link{estimate_coord-constructor}}).}
 }
 \value{
 \verb{constructor_*()} functions return a named \code{list} of arguments for an algorithm (e.g., \code{\link[=estimate_coord_coa]{estimate_coord_coa()}}).
@@ -25,7 +25,7 @@ constructor_map_dbbmm(sim, datasets, verbose, ...)
 \details{
 All \code{constructor} functions have a common signature (see \code{\link{estimate_coord-constructor}}).
 
-For \verb{constructor_map_*()} functions, datasets should include \code{map} and \code{coord} elements. A \code{dataset$coordinate()} element may also be required (see \code{\link[=get_dataset_coord]{get_dataset_coord()}}).
+For \verb{constructor_map_*()} functions, .datasets should include \code{map} and \code{coord} elements. A \code{dataset$coordinate()} element may also be required (see \code{\link[=get_dataset_coord]{get_dataset_coord()}}).
 
 For full customisation, a custom \verb{constructor_*()} function is required.
 }

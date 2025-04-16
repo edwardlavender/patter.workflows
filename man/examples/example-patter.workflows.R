@@ -1,4 +1,3 @@
-rm(list = ls())
 library(patter.workflows)
 
 #### Example workflows
@@ -107,81 +106,29 @@ iteration <-
 dirs.create(iteration$folder_coord)
 dirs.create(iteration$folder_pou)
 
-#### Example (1): Compute coordinates and maps in memory 
-
-## (A) Estimate coordinates
-# Define datasets list to estimate coordinates
-# * map
-# * A data.table of receiver locations
-# * For each unit_id, we need the corresponding detections
-dcoord <- list(map = map, 
-               moorings = moorings, 
-               detections_by_unit = split(detections, detections$unit_id))
-names(dcoord$detections_by_unit)
-# Estimate coordinates 
-coord_list <- cl_lapply_workflow(iteration  = iteration,
-                                datasets    = dcoord,
-                                constructor = constructor_coa, 
-                                algorithm   = estimate_coord_coa)
-# The function returns a list with one element for each iteration row:
-coord_list
-# Each element contains `output` and `callstats`
-coord_list[[1]] 
-
-## (B) Estimate maps (and save in memory)
-dpou <- list(map = map, coord = coord_list)
-pou_list <- cl_lapply_workflow(iteration = iteration, 
-                                  datasets = dpou, 
-                                  constructor = constructor_map_pou, 
-                                  algorithm = estimate_map_pou)
-# The function outputs align with those above: 
-pou_list
-pou_list[[1]]
-terra::plot(pou_list[[1]]$output)
-
-#### Example (2): Compute coordinates and maps and write to file
+#### Compute coordinates and maps and write to file
 
 ## (A) Write coordinates to file
 iteration[, file_output := file.path(folder_coord, "coord.qs")]
-coord_list <- cl_lapply_workflow(iteration   = iteration,
-                                datasets    = dcoord,
-                                constructor = constructor_coa, 
-                                algorithm   = estimate_coord_coa)
+dcoord     <- list(map = map, 
+                   moorings = moorings, 
+                   detections_by_unit = split(detections, detections$unit_id))
+coord_list <- cl_lapply_workflow(.iteration   = iteration,
+                                 .datasets    = dcoord,
+                                 .constructor = constructor_coa, 
+                                 .algorithm   = estimate_coord_coa)
+list.files(iteration$folder_coord)
 
-## (B) Redirect maps to file
+## (B) Write maps to file
+iteration[, file_coord := file_output]
 iteration[, file_output := file.path(folder_pou, "map_pou.tif")]
-pou_list <- cl_lapply_workflow(iteration = iteration, 
-                                  datasets = dpou, 
-                                  constructor = constructor_map_pou, 
-                                  algorithm = estimate_map_pou, 
-                                  write = overwriteRaster)
+dpou     <- list(map = map, coord = coord_list)
+pou_list <- cl_lapply_workflow(.iteration = iteration, 
+                               .datasets = dpou, 
+                               .constructor = constructor_map_pou, 
+                               .algorithm = estimate_map_pou, 
+                               .write = overwriteRaster)
 list.files(iteration$folder_pou)
-
-#### Example (3): Take coffee breaks
-# Use a list of arguments passed to `coffee()` to force coffee breaks
-coffee_schedule <- list(interval = 0.001, duration = 0.1)
-coord_list <- cl_lapply_workflow(iteration   = iteration,
-                                datasets    = dcoord,
-                                constructor = constructor_coa, 
-                                algorithm   = estimate_coord_coa, 
-                                coffee      = coffee_schedule)
-
-#### Example (4): Use output control 
-# Use log.txt
-log.txt   <- tempfile(fileext = ".txt")
-coord_list <- cl_lapply_workflow(iteration   = iteration,
-                                datasets    = dcoord,
-                                constructor = constructor_coa, 
-                                algorithm   = estimate_coord_coa, 
-                                verbose     = log.txt)
-readLines(log.txt)
-unlink(log.txt)
-# Set verbose = FALSE
-coord_list <- cl_lapply_workflow(iteration   = iteration,
-                                datasets    = dcoord,
-                                constructor = constructor_coa, 
-                                algorithm   = estimate_coord_coa, 
-                                verbose     = FALSE)
 
 
 #### ---------------------------------------------------------------------####
@@ -204,32 +151,34 @@ iteration <-
 dirs.create(iteration$folder_coord)
 dirs.create(iteration$folder_pou)
 
-#### Example (1): Compute coordinates and maps in memory 
+#### Compute coordinates and maps and write to file
 
 ## (A) Estimate coordinates
-# Define data list 
-# * NB: We also need a transition matrix of the 'ease of movement' between cells
+iteration[, file_output := file.path(folder_coord, "coord.qs")]
 dcoord <- list(map = map, 
                moorings = moorings, 
                detections_by_unit = split(detections, detections$unit_id))
-# Estimate coordinates
-coord_list <- cl_lapply_workflow(iteration   = iteration,
-                                 datasets    = dcoord,
-                                 constructor = constructor_rsp, 
-                                 algorithm   = estimate_coord_rsp, 
+coord_list <- cl_lapply_workflow(.iteration   = iteration,
+                                 .datasets    = dcoord,
+                                 .constructor = constructor_rsp, 
+                                 .algorithm   = estimate_coord_rsp, 
                                  t.layer     = dat_gebco_tm())
+list.files(iteration$folder_coord)
 
-## (B) Estimate maps (and save in memory)
+## (B) Write maps to file
+iteration[, file_coord := file_output]
+iteration[, file_output := file.path(folder_pou, "map_pou.tif")]
 map_ll   <- map |> terra::project("EPSG:4326")
 water_ll <- terra::mask(terra::setValues(map_ll, TRUE), map_ll)
 dpou     <- list(map = map, coord = coord_list)
-pou_list <- cl_lapply_workflow(iteration   = iteration,
-                               datasets    = dpou,
-                               constructor = constructor_map_dbbmm, 
-                               algorithm   = estimate_map_dbbmm, 
+pou_list <- cl_lapply_workflow(.iteration   = iteration,
+                               .datasets    = dpou,
+                               .constructor = constructor_map_dbbmm, 
+                               .algorithm   = estimate_map_dbbmm, 
                                # 'static' arguments:
                                base.raster = water_ll, 
                                UTM = 29)
+list.files(iteration$folder_pou)
 
 # For other examples, see above.
 
@@ -271,29 +220,29 @@ dirs.create(iteration$folder_coord)
 dirs.create(iteration$folder_pou)
 
 #### Define custom estimate_coord constructor function 
-constructor_ac <- function(sim, datasets, verbose, ...) {
+constructor_ac <- function(.sim, .datasets, .verbose, ...) {
   
   stopifnot(length(list(...)) == 0L)
   
   # Define timeline
   # * We could create a timeline over the following week here (given weekly time blocks)
   # * As it is, we focus on a smaller timeline for example speed. 
-  timeline <- seq(sim$week_id, 
-                  sim$week + 2 * 24 * 60 * 60,
+  timeline <- seq(.sim$week_id, 
+                  .sim$week + 2 * 24 * 60 * 60,
                   by = "2 mins")
   
   # Define movement model
   state <- "StateXY"
   model_move <- 
-    model_move_xy(.mobility = sim$mobility,
-                  .dbn_length = glue("truncated(Gamma({sim$k}, {sim$theta}), 
-                                      lower = 0.0, upper = {sim$mobility})"),
+    model_move_xy(.mobility = .sim$mobility,
+                  .dbn_length = glue("truncated(Gamma({.sim$k}, {.sim$theta}), 
+                                      lower = 0.0, upper = {.sim$mobility})"),
                   .dbn_heading = "Uniform(-pi, pi)")
   
   # Assemble observations
-  # (We could also read datasets for sim$unit_id from file)
-  moorings   <- get_dataset_moorings(sim, datasets)
-  detections <- get_dataset_detections(sim, datasets)
+  # (We could also read datasets for .sim$unit_id from file)
+  moorings   <- get_dataset_moorings(.sim, .datasets)
+  detections <- get_dataset_detections(.sim, .datasets)
   acoustics  <- assemble_acoustics(.timeline = timeline, 
                                    .detections = detections, 
                                    .moorings = moorings)
@@ -302,7 +251,7 @@ constructor_ac <- function(sim, datasets, verbose, ...) {
     # Include containers if necessary
     containers <- assemble_acoustics_containers(.timeline = timeline, 
                                                 .acoustics = acoustics, 
-                                                .mobility = sim$mobility, 
+                                                .mobility = .sim$mobility, 
                                                 .map = map)
     yobs_fwd$ModelObsContainer <- containers$forward
     yobs_bwd$ModelObsContainer <- containers$backward
@@ -316,7 +265,7 @@ constructor_ac <- function(sim, datasets, verbose, ...) {
                    .yobs       = yobs_fwd, 
                    .n_particle = 1e4L, 
                    .direction  = "forward", 
-                   .verbose    = verbose)
+                   .verbose    = .verbose)
   
   # Define arguments for backward filter run
   args_bwd            <- args_fwd
@@ -337,11 +286,11 @@ constructor_ac <- function(sim, datasets, verbose, ...) {
   # - `forward`
   # - `backward`  (if smoothing desired, NULL otherwise)
   # - `smooth`    (if smoothing desired, NULL otherwise)
-  list(forward = args_fwd, backward = args_bwd, smooth = args_smo, verbose = verbose)
+  list(forward = args_fwd, backward = args_bwd, smooth = args_smo, verbose = .verbose)
   
 }
 
-## (A) Estimate coordinates (writing to file)
+## (A) Write coordinates to file
 # Define datasets 
 datasets <- list(map = map, 
                  moorings = moorings, 
@@ -352,21 +301,21 @@ iteration[, file_output := file.path(folder_coord, "coord.qs")]
 set_vmap(.map = map, .mobility = pars$mobility[1])
 # Estimate coordinates
 coord_list <- 
-  cl_lapply_workflow(iteration   = iteration,
-                     datasets    = datasets,
-                     constructor = constructor_ac, 
-                     algorithm   = estimate_coord_particle)
+  cl_lapply_workflow(.iteration   = iteration,
+                     .datasets    = datasets,
+                     .constructor = constructor_ac, 
+                     .algorithm   = estimate_coord_particle)
 
-## (B) Redirect maps to file
+## (B) Write maps to file
 iteration[, file_coord := file_output]
 iteration[, file_output := file.path(folder_pou, "map_pou.tif")]
 iteration <- iteration[file.exists(file_coord), ]
 dpou      <- list(map = map, coord = coord_list, coordinates = function(x) x$smooth$states)
-pou_list  <- cl_lapply_workflow(iteration = iteration, 
-                                datasets = dpou, 
-                                constructor = constructor_map_pou, 
-                                algorithm = estimate_map_pou, 
-                                write = overwriteRaster)
+pou_list  <- cl_lapply_workflow(.iteration = iteration, 
+                                .datasets = dpou, 
+                                .constructor = constructor_map_pou, 
+                                .algorithm = estimate_map_pou, 
+                                .write = overwriteRaster)
 # Plot example map
 iteration$file_output[1] |>
   terra::rast() |> 

@@ -9,42 +9,42 @@
 \alias{get_parameter}
 \title{Estimate coordinates: get \code{algorithm} inputs}
 \usage{
-get_dataset_map(sim, datasets)
+get_dataset_map(.sim, .datasets)
 
-get_dataset_detections(sim, datasets)
+get_dataset_detections(.sim, .datasets)
 
-get_dataset_moorings(sim, datasets)
+get_dataset_moorings(.sim, .datasets)
 
-get_dataset_coord(sim, datasets)
+get_dataset_coord(.sim, .datasets)
 
-get_parameter(sim, parameter)
+get_parameter(.sim, parameter)
 }
 \arguments{
-\item{sim, datasets}{Arguments inherited from \code{constructor} in \code{\link[proj.lapply:workflow]{proj.lapply::workflow()}}.}
+\item{.sim, .datasets}{Arguments inherited from \code{constructor} in \code{\link[proj.lapply:workflow]{proj.lapply::workflow()}}.}
 
-\item{parameter}{A \code{character} that defines the name of a column in \code{sim}.}
+\item{parameter}{A \code{character} that defines the name of a column in \code{.sim}.}
 }
 \description{
-These functions get \code{algorithm} inputs (i.e., parameters or datasets).
+These functions get \code{algorithm} inputs (i.e., parameters or .datasets).
 }
 \details{
-These functions simply extract required inputs from \code{sim} or \code{datasets} with appropriate checks.
+These functions simply extract required inputs from \code{.sim} or \code{.datasets} with appropriate checks.
 
-\verb{get_dataset_*()} functions extract a \code{dataset} from \code{datasets}.
+\verb{get_dataset_*()} functions extract a \code{dataset} from \code{.datasets}.
 
 The following functions are designed to support \code{estimate_coord} constructors:
 \itemize{
-\item \code{\link[=get_dataset_map]{get_dataset_map()}} extracts \code{datasets$map}
-\item \code{\link[=get_dataset_detections]{get_dataset_detections()}} extracts \code{datasets$detections_by_unit[[sim$unit_id]]}
-\item \code{\link[=get_dataset_moorings]{get_dataset_moorings()}} extracts \code{datasets$moorings}
+\item \code{\link[=get_dataset_map]{get_dataset_map()}} extracts \code{.datasets$map}
+\item \code{\link[=get_dataset_detections]{get_dataset_detections()}} extracts \code{.datasets$detections_by_unit[[.sim$unit_id]]}
+\item \code{\link[=get_dataset_moorings]{get_dataset_moorings()}} extracts \code{.datasets$moorings}
 }
 
 The following functions are designed to support \code{estimate_map} constructors:
 \itemize{
-\item \code{\link[=get_dataset_coord]{get_dataset_coord()}} gets coordinates from file, via \code{qs::qread(sim$file_coord)}, or memory, via \code{datasets$coord[[sim$index]]$output}. A \code{datasets$coordinates()} function can be supplied to extract the coordinates, in the format required by the \code{estimate_map} function, for estimation.
+\item \code{\link[=get_dataset_coord]{get_dataset_coord()}} gets coordinates from file, via \code{qs::qread(.sim$file_coord)}, or memory, via \code{.datasets$coord[[.sim$index]]$output}. A \code{.datasets$coordinates()} function can be supplied to extract the coordinates, in the format required by the \code{estimate_map} function, for estimation.
 }
 
-\code{get_parameter()} functions extract a parameter value via \code{sim[[parameter]]};
+\code{get_parameter()} functions extract a parameter value via \code{.sim[[parameter]]};
 
 These functions are used in \code{constructor} functions.
 
