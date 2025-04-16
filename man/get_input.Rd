@@ -6,6 +6,7 @@
 \alias{get_dataset_detections}
 \alias{get_dataset_moorings}
 \alias{get_dataset_coord}
+\alias{get_dataset_ud}
 \alias{get_parameter}
 \title{Estimate coordinates: get \code{algorithm} inputs}
 \usage{
@@ -16,6 +17,8 @@ get_dataset_detections(.sim, .datasets)
 get_dataset_moorings(.sim, .datasets)
 
 get_dataset_coord(.sim, .datasets)
+
+get_dataset_ud(.sim, .datasets)
 
 get_parameter(.sim, parameter)
 }

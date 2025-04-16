@@ -79,7 +79,25 @@ get_dataset_coord <- function(.sim, .datasets) {
 #' @rdname get_input
 #' @export
 
+get_dataset_ud <- function(.sim, .datasets) {
+  # Read dataset from file, if available
+  if (rlang::has_name(.sim, "file_ud")) {
+    data <- terra::rast(.sim$file_ud)
+  } else {
+    # Read dataset from memory 
+    check_names(.sim, "index")
+    check_names(.datasets, "ud")
+    data <- .datasets$ud[[.sim$index]]$output
+  }
+  data
+}
+
+#' @rdname get_input
+#' @export
+
 get_parameter <- function(.sim, parameter) {
   check_names(.sim, parameter)
   .sim[[parameter]]
 }
+
+

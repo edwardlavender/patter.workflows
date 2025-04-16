@@ -9,7 +9,7 @@
 Iterative workflows for animal-tracking analyses, with a focus on the `patter` package. The core routines provide an iterative framework for repeated applications of algorithms that estimate the positions of tagged individuals (coordinates) or patterns of space use. This facilitates analyses of multiple individuals, time blocks and algorithm sensitivity (i.e., multiple parameters).
 }
 \examples{
-library(patter.workflows)
+devtools::load_all()
 
 #### Example workflows
 # Iterative workflow examples for coordinate estimation and mapping
@@ -120,7 +120,8 @@ dirs.create(iteration$folder_pou)
 #### Compute coordinates and maps and write to file
 
 ## (A) Write coordinates to file
-iteration[, file_output := file.path(folder_coord, "coord.qs")]
+iteration[, file_coord := file.path(folder_coord, "coord.qs")]
+iteration[, file_output := file_coord]
 dcoord     <- list(map = map, 
                    moorings = moorings, 
                    detections_by_unit = split(detections, detections$unit_id))
@@ -128,18 +129,22 @@ coord_list <- cl_lapply_workflow(.iteration   = iteration,
                                  .datasets    = dcoord,
                                  .constructor = constructor_coa, 
                                  .algorithm   = estimate_coord_coa)
+# Examine coordinates
 list.files(iteration$folder_coord)
+lapply_qplot_coord(iteration, .map = map)
 
 ## (B) Write maps to file
-iteration[, file_coord := file_output]
-iteration[, file_output := file.path(folder_pou, "map_pou.tif")]
+iteration[, file_ud := file.path(folder_pou, "map_pou.tif")]
+iteration[, file_output := file_ud]
 dpou     <- list(map = map, coord = coord_list)
 pou_list <- cl_lapply_workflow(.iteration = iteration, 
                                .datasets = dpou, 
                                .constructor = constructor_map_pou, 
                                .algorithm = estimate_map_pou, 
                                .write = overwriteRaster)
+# Examine maps
 list.files(iteration$folder_pou)
+lapply_qplot_ud(iteration)
 
 
 #### ---------------------------------------------------------------------####
@@ -165,7 +170,8 @@ dirs.create(iteration$folder_pou)
 #### Compute coordinates and maps and write to file
 
 ## (A) Estimate coordinates
-iteration[, file_output := file.path(folder_coord, "coord.qs")]
+iteration[, file_coord := file.path(folder_coord, "coord.qs")]
+iteration[, file_output := file_coord]
 dcoord <- list(map = map, 
                moorings = moorings, 
                detections_by_unit = split(detections, detections$unit_id))
@@ -174,11 +180,22 @@ coord_list <- cl_lapply_workflow(.iteration   = iteration,
                                  .constructor = constructor_rsp, 
                                  .algorithm   = estimate_coord_rsp, 
                                  t.layer     = dat_gebco_tm())
+# Examine coordinates
 list.files(iteration$folder_coord)
+lapply_qplot_coord(iteration, 
+                   .datasets = list(coordinates = function(rsp) {
+                     interp <- rsp[["detections"]][[1]]
+                     cbind(interp$Longitude, interp$Latitude) |> 
+                       terra::vect(crs = "WGS84") |> 
+                       terra::project(map) |> 
+                       terra::crds() |> 
+                       data.table()
+                   }), 
+                   .map = map)
 
 ## (B) Write maps to file
-iteration[, file_coord := file_output]
-iteration[, file_output := file.path(folder_pou, "map_pou.tif")]
+iteration[, file_ud := file.path(folder_pou, "map_pou.tif")]
+iteration[, file_output := file_ud]
 map_ll   <- map |> terra::project("EPSG:4326")
 water_ll <- terra::mask(terra::setValues(map_ll, TRUE), map_ll)
 dpou     <- list(map = map, coord = coord_list)
@@ -188,10 +205,11 @@ pou_list <- cl_lapply_workflow(.iteration   = iteration,
                                .algorithm   = estimate_map_dbbmm, 
                                # 'static' arguments:
                                base.raster = water_ll, 
-                               UTM = 29)
+                               UTM = 29, 
+                               .write = overwriteRaster)
+# Examine maps
 list.files(iteration$folder_pou)
-
-# For other examples, see above.
+lapply_qplot_ud(iteration)
 
 
 #### ---------------------------------------------------------------------####
@@ -308,7 +326,8 @@ datasets <- list(map = map,
                  detections_by_unit = split(detections, detections$unit_id))
 # Select iterations 
 iteration <- iteration[mobility == pars$mobility[1], ][1:5L, ]
-iteration[, file_output := file.path(folder_coord, "coord.qs")]
+iteration[, file_coord := file.path(folder_coord, "coord.qs")]
+iteration[, file_output := file_coord]
 set_vmap(.map = map, .mobility = pars$mobility[1])
 # Estimate coordinates
 coord_list <- 
@@ -316,21 +335,27 @@ coord_list <-
                      .datasets    = datasets,
                      .constructor = constructor_ac, 
                      .algorithm   = estimate_coord_particle)
+# Examine coordinates
+list.files(iteration$folder_coord)
+lapply_qplot_coord(iteration, 
+                   .datasets = list(coordinates = function(x) x$smooth$states),
+                   .map = map)
 
 ## (B) Write maps to file
-iteration[, file_coord := file_output]
-iteration[, file_output := file.path(folder_pou, "map_pou.tif")]
+iteration[, file_ud := file.path(folder_pou, "map_pou.tif")]
+iteration[, file_output := file_ud]
 iteration <- iteration[file.exists(file_coord), ]
-dpou      <- list(map = map, coord = coord_list, coordinates = function(x) x$smooth$states)
+dpou      <- list(map = map, 
+                  coord = coord_list, 
+                  coordinates = function(x) x$smooth$states)
 pou_list  <- cl_lapply_workflow(.iteration = iteration, 
                                 .datasets = dpou, 
                                 .constructor = constructor_map_pou, 
                                 .algorithm = estimate_map_pou, 
                                 .write = overwriteRaster)
-# Plot example map
-iteration$file_output[1] |>
-  terra::rast() |> 
-  terra::plot()
+# Examine maps
+list.files(iteration$folder_pou)
+lapply_qplot_ud(iteration)
 
 
 dir_cleanup(unitsets$folder_home)

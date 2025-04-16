@@ -30,6 +30,8 @@
 #' @importFrom proj.build check_names
 #' @importFrom proj.build list_merge
 #' @importFrom proj.build nothing
+#' @importFrom proj.build warn
+#' 
 #' @importFrom proj.lapply coffee
 #' 
 #' @importFrom rlang .data
