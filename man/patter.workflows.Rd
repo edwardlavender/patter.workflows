@@ -9,8 +9,6 @@
 Iterative workflows for animal-tracking analyses, with a focus on the `patter` package. The core routines provide an iterative framework for repeated applications of algorithms that estimate the positions of tagged individuals (coordinates) or patterns of space use. This facilitates analyses of multiple individuals, time blocks and algorithm sensitivity (i.e., multiple parameters).
 }
 \examples{
-devtools::load_all()
-
 #### Example workflows
 # Iterative workflow examples for coordinate estimation and mapping
 # of tagged animals (in receiver arrays)

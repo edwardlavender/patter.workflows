@@ -11,7 +11,7 @@ constructor_coa(.sim, .datasets, .verbose, ...)
 constructor_rsp(.sim, .datasets, .verbose, ...)
 }
 \arguments{
-\item{.sim, .datasets, .verbose, ...}{Arguments inherited from \code{\link[=cl_lapply_workflow]{cl_lapply_workflow()}}:
+\item{.sim, .datasets, .verbose, ...}{Arguments inherited from \code{\link[proj.lapply:cl_lapply_workflow]{proj.lapply::cl_lapply_workflow()}}:
 \itemize{
 \item \code{.sim} is a \code{\link{data.table}} row;
 \item \code{.datasets} is a named \code{list} of .datasets, generally used to pass iteration-specific arguments to a \code{constructor};

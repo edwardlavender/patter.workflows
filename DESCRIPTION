@@ -9,19 +9,31 @@ Authors@R:
 Description: Iterative workflows for animal-tracking analyses, with a focus on the `patter` package. The core routines provide an iterative framework for repeated applications of algorithms that estimate the positions of tagged individuals (coordinates) or patterns of space use. This facilitates analyses of multiple individuals, time blocks and algorithm sensitivity (i.e., multiple parameters). 
 License: MIT + file LICENSE
 Imports:
-  JuliaCall, data.table, dplyr, glue, patter, proj.build, proj.lapply, rlang, spatial.extensions
+  data.table, 
+  patter, 
+  proj.build,
+  rlang, 
+  terra
 Suggests:
     actel,
+    cli,
+    dplyr,
     dtplyr,
+    glue, 
     ggplot2,
+    grDevices,
+    JuliaCall,
+    lifecycle,
     lubridate,
     proj.file,
     RSP,
     qs,
+    scales,
     sf,
+    proj.lapply,
+    spatial.extensions,
     spelling,
-    testthat (>= 3.0.0),
-    terra
+    testthat (>= 3.0.0)
 Remotes:
     github::edwardlavender/proj.build, 
     github::edwardlavender/proj.file,

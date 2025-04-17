@@ -1,6 +1,6 @@
 #' @title Estimate coordinates: constructors
 #' @description `estimate_coord_*()` `constructor` functions construct a named `list` of arguments for an `estimate_coord_*()` function. 
-#' @param .sim,.datasets,.verbose,... Arguments inherited from [`cl_lapply_workflow()`]:
+#' @param .sim,.datasets,.verbose,... Arguments inherited from [`proj.lapply::cl_lapply_workflow()`]:
 #' * `.sim` is a [`data.table`] row;
 #' * `.datasets` is a named `list` of .datasets, generally used to pass iteration-specific arguments to a `constructor`;
 #' * `...` are additional static arguments passed to `constructor` for an `algorithm` function;

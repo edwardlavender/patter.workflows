@@ -23,7 +23,7 @@ lapply_qplot_ud(.iteration, .datasets = list(), .n_plot = 4L, ...)
 \item{.datasets}{A named \code{list} of datasets, with one element for each \code{iteration}, required if \code{iteration$file_output} is not specified:
 \itemize{
 \item For \code{\link[=lapply_qplot_coord]{lapply_qplot_coord()}}, \code{.datasets} should contain \code{coord} and (optional) \code{coordinates} elements (see \code{\link[=get_dataset_coord]{get_dataset_coord()}}). The extracted coordinates should comprise a \code{\link{data.table}} of \code{x} and \code{y} coordinates for this function.
-\item For \code{\link[=lapply_qplot_map]{lapply_qplot_map()}}, \code{.datasets} should contain a \code{ud} element  (see \code{\link[=get_dataset_ud]{get_dataset_ud()}}).
+\item For \code{\link[=lapply_qplot_ud]{lapply_qplot_ud()}}, \code{.datasets} should contain a \code{ud} element  (see \code{\link[=get_dataset_ud]{get_dataset_ud()}}).
 }}
 
 \item{.n_plot}{An \code{integer} that defines the number of plots.}
@@ -31,6 +31,8 @@ lapply_qplot_ud(.iteration, .datasets = list(), .n_plot = 4L, ...)
 \item{.n_coord}{For \code{\link[=lapply_qplot_coord]{lapply_qplot_coord()}}, \code{.n_coord} is an \code{integer} that defines the maximum number of coordinate pairs to plot.}
 
 \item{.map}{For \code{\link[=lapply_qplot_coord]{lapply_qplot_coord()}}, \code{.map} is a spatial layer, plotted via \code{\link[terra:plot]{terra::plot()}}, onto which coordinates are added.}
+
+\item{...}{Additional arguments passed to \code{\link[terra:plot]{terra::plot()}}.}
 }
 \description{
 These functions quickly plot maps, reading map layers from memory or from file.

@@ -18,7 +18,7 @@
 
 as_actel <- function(.map, .detections, .moorings) {
   
-  rlang::check_installed("actel")
+  rlang::check_installed(c("actel", "dplyr"))
   
   #### Get data
   .detections <- as.data.frame(.detections)

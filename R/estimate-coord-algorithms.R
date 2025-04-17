@@ -45,6 +45,7 @@ estimate_coord_rsp <- function(...) {
 estimate_coord_particle <- function(forward, backward, smooth, verbose) {
   
   #### Initialise
+  rlang::check_installed("proj.lapply")
   coffee()
   fwd <- bwd <- smo <- NULL
   

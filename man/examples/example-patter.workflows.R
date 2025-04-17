@@ -1,5 +1,3 @@
-devtools::load_all()
-
 #### Example workflows
 # Iterative workflow examples for coordinate estimation and mapping
 # of tagged animals (in receiver arrays)

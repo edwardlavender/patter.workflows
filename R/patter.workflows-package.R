@@ -7,16 +7,13 @@
 #' @importFrom data.table as.data.table
 #' @importFrom data.table copy
 #' @importFrom data.table data.table
+#' @importFrom data.table rbindlist
+#' @importFrom data.table setDT
 #' @importFrom data.table .N
 #' @importFrom data.table :=
-#' 
-#' @importFrom dplyr group_by
-#' @importFrom dplyr mutate
-#' @importFrom dplyr slice
-#' 
-#' @importFrom glue glue
-#' 
-#' @importFrom JuliaCall julia_command
+#'
+#' @importFrom graphics par
+#' @importFrom graphics points
 #' 
 #' @importFrom patter coa
 #' @importFrom patter pf_filter
@@ -27,15 +24,12 @@
 #'
 #' @importFrom proj.build abort
 #' @importFrom proj.build cat_do
+#' @importFrom proj.build cat_setup
 #' @importFrom proj.build check_names
 #' @importFrom proj.build list_merge
 #' @importFrom proj.build nothing
 #' @importFrom proj.build warn
 #' 
-#' @importFrom proj.lapply coffee
-#' 
 #' @importFrom rlang .data
-#' 
-#' @importFrom spatial.extensions spatNormalise
 
 NULL
