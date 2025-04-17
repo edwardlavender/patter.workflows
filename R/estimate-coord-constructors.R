@@ -34,11 +34,11 @@
 #' * (Other parameters are left at default settings); 
 #' * A named `list` of arguments, including .datasets and parameters, plus any arguments passed via `...`, for the relevant function (e.g., [`estimate_coord_coa()`]) is returned;
 #' 
-#' For more control, define a custom `constructor_*()` function.
+#' For more control, define a custom `constructor` function.
 #' 
 #' For [`estimate_coord_particle()`] constructors have to be defined manually, following the same function signature. 
 #' 
-#' @return `constructor_*()` functions return a named `list` of arguments for an algorithm (e.g., [`estimate_coord_coa()`]).
+#' @return `constructor` functions return a named `list` of arguments for an algorithm (e.g., [`estimate_coord_coa()`]).
 #' @author Edward Lavender
 #' @name estimate_coord-constructor
 

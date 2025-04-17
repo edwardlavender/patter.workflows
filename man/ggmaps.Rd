@@ -20,7 +20,7 @@ ggmaps(
 )
 }
 \arguments{
-\item{.mapdt}{A \code{\link{data.table}} that defines plot maps with the following columns:
+\item{.mapdt}{A \code{\link{data.table}} that defines panel maps with the following columns:
 \itemize{
 \item \code{row}, \code{column} : row/column identifiers;
 \item \code{file_ud}       : the path to the map, readable by \code{\link[terra:rast]{terra::rast()}};
@@ -29,13 +29,13 @@ ggmaps(
 \item{.map, .coast, .poly, .moorings}{Spatial layers.
 \itemize{
 \item \code{.map} is a \code{\link[terra:SpatRaster-class]{terra::SpatRaster}}. This is used to handle blank panels (panels where \code{.mapdt$file_ud} does not exist).
-\item (optional) \code{.coast}, \code{.poly} Simple feature polygon, or similar, that define coastline and/or other relevant boundaries (e.g., a Marine Protected Area). Objects are coerced to simple features for plotting via \code{\link[sf:st_as_sf]{sf::st_as_sf()}}.
+\item (optional) \code{.coast}, \code{.poly} Simple feature polygons (or similar) that define coastline and/or other relevant boundaries (e.g., a Marine Protected Area). Objects are coerced to simple features for plotting via \code{\link[sf:st_as_sf]{sf::st_as_sf()}}.
 \item (optional) \code{.moorings} A \code{\link{data.table}} of coordinates (in columns \code{receiver_x} and \code{receiver_y}).
 }}
 
 \item{.coast_tolerance, .coast_mask}{Spatial operations applied to spatial layers before plotting.
 \itemize{
-\item \code{.coast_tolerance} is a \code{double}, passed to \code{\link[sf:geos_unary]{sf::st_simplify()}}'s \code{dtolerance} argument to simplify the coastline polygon before plotting (for improved speed).
+\item \code{.coast_tolerance} is a \code{double}, passed to \code{\link[sf:geos_unary]{sf::st_simplify()}}'s \code{dTolerance} argument to simplify the coastline before plotting (for improved speed).
 \item \code{.coast_mask} is a logical variable that defines whether or not to mask each UD by \code{.coast}.
 }}
 
@@ -48,12 +48,17 @@ ggmaps(
 \description{
 This function produces multi-panel plots of \code{\link[terra:SpatRaster-class]{terra::SpatRaster}}s. It was designed to plot utilisation distributions (UDs) for multiple animals (rows) constructed by different algorithms (columns) in passive acoustic telemetry systems. UDs are expected to live on the disk.
 }
+\details{
+By default, \code{.zlim} is defined for each map between the minimum and maximum values of that map, unless specified. The colour scheme is inherited from \code{getOption(terra.pal)}, if specified, or set to \code{grDevices::terrain.colors(256L, rev = TRUE)} otherwise. Graphical properties for \code{.coast} and \code{.moorings} are set internally. \code{.poly} is added as a line. A \code{col} column can be included to set polygon colour; other properties are set internally. Blank panels (without a UD) are produced for any \code{.mapdt$file_ud} that doesn't exist. If \code{.coast}, \code{.poly} and/or \code{.moorings} are specified, these spatial layers are rendered partially transparent on such panels. Submit an issue request for additional customisation options.
+}
 \examples{
 library(data.table)
 library(ggplot2)
 library(patter)
 library(proj.lapply)        # cl_lapply_workflow
 library(spatial.extensions) # overwriteRaster
+
+#### Set up example
 
 # Define temporary directory
 folder <- file.path(tempdir(), "ggmaps")
@@ -87,6 +92,8 @@ out <- cl_lapply_workflow(.iteration = iteration[c(1, 2, 3, 5, 6)],
                           },
                           .write = overwriteRaster)
 
+#### Examples
+
 # Define mapdt
 mapdt <- data.table(file_ud = iteration$file_output,
                     row     = iteration$individual_id,
@@ -108,7 +115,7 @@ ggmaps(mapdt,
 # Add polygon (e.g., MPA boundary)
 # * Note that the coastline in panel four is transparent
 ggmaps(mapdt,
-       .map = map, .xlim = xlim, .ylim = ylim,
+       .map = map, # .xlim = xlim, .ylim = ylim,
        .coast = coast, .coast_mask = TRUE,
        .poly = mpa)
 

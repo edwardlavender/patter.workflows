@@ -1,4 +1,4 @@
-#' @title Estimate map: constructors
+#' @title Estimate maps: constructors
 #' @description `estimate_map_*()` `constructor` functions construct a named `list` of arguments for an `estimate_map_*()` function. 
 #' @param .sim,.datasets,.verbose,... Constructor arguments (see [`estimate_coord-constructor`]).
 #' @details
@@ -6,9 +6,9 @@
 #' 
 #' For `constructor_map_*()` functions, .datasets should include `map` and `coord` elements. A `dataset$coordinate()` element may also be required (see [`get_dataset_coord()`]).
 #' 
-#' For full customisation, a custom `constructor_*()` function is required. 
+#' For full customisation, a custom `constructor` function is required. 
 #' 
-#' @return `constructor_*()` functions return a named `list` of arguments for an algorithm (e.g., [`estimate_coord_coa()`]).
+#' @return `constructor` functions return a named `list` of arguments for an algorithm (e.g., [`estimate_coord_coa()`]).
 #' @author Edward Lavender
 #' @name estimate_map-constructor
 

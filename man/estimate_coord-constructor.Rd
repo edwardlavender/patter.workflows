@@ -20,7 +20,7 @@ constructor_rsp(.sim, .datasets, .verbose, ...)
 }}
 }
 \value{
-\verb{constructor_*()} functions return a named \code{list} of arguments for an algorithm (e.g., \code{\link[=estimate_coord_coa]{estimate_coord_coa()}}).
+\code{constructor} functions return a named \code{list} of arguments for an algorithm (e.g., \code{\link[=estimate_coord_coa]{estimate_coord_coa()}}).
 }
 \description{
 \verb{estimate_coord_*()} \code{constructor} functions construct a named \code{list} of arguments for an \verb{estimate_coord_*()} function.
@@ -70,7 +70,7 @@ Inbuilt constructors are implemented as follows:
 \item A named \code{list} of arguments, including .datasets and parameters, plus any arguments passed via \code{...}, for the relevant function (e.g., \code{\link[=estimate_coord_coa]{estimate_coord_coa()}}) is returned;
 }
 
-For more control, define a custom \verb{constructor_*()} function.
+For more control, define a custom \code{constructor} function.
 
 For \code{\link[=estimate_coord_particle]{estimate_coord_particle()}} constructors have to be defined manually, following the same function signature.
 }

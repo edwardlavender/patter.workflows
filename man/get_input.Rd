@@ -47,7 +47,13 @@ The following functions are designed to support \code{estimate_map} constructors
 \item \code{\link[=get_dataset_coord]{get_dataset_coord()}} gets coordinates from file, via \code{qs::qread(.sim$file_coord)}, or memory, via \code{.datasets$coord[[.sim$index]]$output}. A \code{.datasets$coordinates()} function can be supplied to extract the coordinates, in the format required by the \code{estimate_map} function, for estimation.
 }
 
-\code{get_parameter()} functions extract a parameter value via \code{.sim[[parameter]]};
+The following functions are used in downstream mapping routines (e.g., \code{\link{lapply_qplot}}\verb{_*()}):
+\itemize{
+\item \code{\link[=get_dataset_coord]{get_dataset_coord()}} (see above);
+\item \code{\link[=get_dataset_ud]{get_dataset_ud()}} gets \code{\link[terra:SpatRaster-class]{terra::SpatRaster}}s from file, via \code{terra::rast(.sim$file_ud)}, or memory, via \code{.datasets$ud[[.sim$index]]$output}.
+}
+
+\code{\link[=get_parameter]{get_parameter()}} functions extract a parameter value via \code{.sim[[parameter]]};
 
 These functions are used in \code{constructor} functions.
 

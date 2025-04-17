@@ -1,18 +1,21 @@
 #' @title `ggplot` maps
 #' @description This function produces multi-panel plots of [`terra::SpatRaster`]s. It was designed to plot utilisation distributions (UDs) for multiple animals (rows) constructed by different algorithms (columns) in passive acoustic telemetry systems. UDs are expected to live on the disk.
-#' @param .mapdt  A [`data.table`] that defines plot maps with the following columns: 
+#' @param .mapdt  A [`data.table`] that defines panel maps with the following columns: 
 #' * `row`, `column` : row/column identifiers;
 #' * `file_ud`       : the path to the map, readable by [`terra::rast()`];
 #' @param .map,.coast,.poly,.moorings Spatial layers.
 #' * `.map` is a [`terra::SpatRaster`]. This is used to handle blank panels (panels where `.mapdt$file_ud` does not exist). 
-#' * (optional) `.coast`, `.poly` Simple feature polygon, or similar, that define coastline and/or other relevant boundaries (e.g., a Marine Protected Area). Objects are coerced to simple features for plotting via [`sf::st_as_sf()`].
+#' * (optional) `.coast`, `.poly` Simple feature polygons (or similar) that define coastline and/or other relevant boundaries (e.g., a Marine Protected Area). Objects are coerced to simple features for plotting via [`sf::st_as_sf()`].
 #' * (optional) `.moorings` A [`data.table`] of coordinates (in columns `receiver_x` and `receiver_y`). 
 #' @param .coast_tolerance,.coast_mask Spatial operations applied to spatial layers before plotting. 
-#' * `.coast_tolerance` is a `double`, passed to [`sf::st_simplify()`]'s `dtolerance` argument to simplify the coastline polygon before plotting (for improved speed). 
+#' * `.coast_tolerance` is a `double`, passed to [`sf::st_simplify()`]'s `dTolerance` argument to simplify the coastline before plotting (for improved speed). 
 #' * `.coast_mask` is a logical variable that defines whether or not to mask each UD by `.coast`.
 #' @param .xlim,.ylim,.zlim (optional) Axis limits. 
 #' @param .png_args (optional) A named `list` of arguments, passed to [`grDevices::png()`], to write the image to file.  
 #' @param .verbose User output control. 
+#' @details
+#' By default, `.zlim` is defined for each map between the minimum and maximum values of that map, unless specified. The colour scheme is inherited from `getOption(terra.pal)`, if specified, or set to `grDevices::terrain.colors(256L, rev = TRUE)` otherwise. Graphical properties for `.coast` and `.moorings` are set internally. `.poly` is added as a line. A `col` column can be included to set polygon colour; other properties are set internally. Blank panels (without a UD) are produced for any `.mapdt$file_ud` that doesn't exist. If `.coast`, `.poly` and/or `.moorings` are specified, these spatial layers are rendered partially transparent on such panels. Submit an issue request for additional customisation options. 
+#' 
 #' @example man/examples/example-ggplots.R
 #' @author Edward Lavender
 #' @export 

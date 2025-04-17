@@ -15,7 +15,12 @@
 #' 
 #'    * [`get_dataset_coord()`] gets coordinates from file, via `qs::qread(.sim$file_coord)`, or memory, via `.datasets$coord[[.sim$index]]$output`. A `.datasets$coordinates()` function can be supplied to extract the coordinates, in the format required by the `estimate_map` function, for estimation. 
 #'    
-#' `get_parameter()` functions extract a parameter value via `.sim[[parameter]]`;
+#' The following functions are used in downstream mapping routines (e.g., [`lapply_qplot`]`_*()`):
+#' 
+#'    * [`get_dataset_coord()`] (see above);
+#'    * [`get_dataset_ud()`] gets [`terra::SpatRaster`]s from file, via `terra::rast(.sim$file_ud)`, or memory, via `.datasets$ud[[.sim$index]]$output`.
+#'    
+#' [`get_parameter()`] functions extract a parameter value via `.sim[[parameter]]`;
 #' 
 #' These functions are used in `constructor` functions. 
 #' 

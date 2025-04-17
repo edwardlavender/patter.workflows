@@ -4,6 +4,8 @@ library(patter)
 library(proj.lapply)        # cl_lapply_workflow
 library(spatial.extensions) # overwriteRaster
 
+#### Set up example
+
 # Define temporary directory
 folder <- file.path(tempdir(), "ggmaps")
 dir.create(folder)
@@ -36,6 +38,8 @@ out <- cl_lapply_workflow(.iteration = iteration[c(1, 2, 3, 5, 6)],
                           },
                           .write = overwriteRaster)
 
+#### Examples
+
 # Define mapdt
 mapdt <- data.table(file_ud = iteration$file_output,
                     row     = iteration$individual_id,
@@ -57,7 +61,7 @@ ggmaps(mapdt,
 # Add polygon (e.g., MPA boundary)
 # * Note that the coastline in panel four is transparent
 ggmaps(mapdt,
-       .map = map, .xlim = xlim, .ylim = ylim,
+       .map = map, # .xlim = xlim, .ylim = ylim,
        .coast = coast, .coast_mask = TRUE,
        .poly = mpa)
 

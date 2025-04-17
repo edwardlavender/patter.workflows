@@ -13,9 +13,10 @@ status](https://www.r-pkg.org/badges/version/patter)](https://CRAN.R-project.org
 
 `patter.workflows` provides iterative workflows for animal-tracking
 analyses, with a focus on the
-[`patter`](https://github.com/edwardlavender/patter) package. This is
-built around the
-[`proj.verse`](https://github.com/edwardlavender/proj.verse). The core
+[`patter`](https://github.com/edwardlavender/patter) package. The
+package leverages the
+[`proj.verse`](https://github.com/edwardlavender/proj.verse), especially
+[`proj.lapply`](https://github.com/edwardlavender/proj.lapply). The core
 routines provide an iterative framework for repeated applications of
 algorithms that estimate the positions of tagged individuals
 (coordinates) or patterns of space use. This facilitates analyses of
@@ -53,26 +54,40 @@ devtools::install_github("edwardlavender/patter.workflows",
 
 **`patter.workflows` leverages `proj.lapply::cl_lapply_workflow()`** to
 implement `algorithm` workflows iteratively. To implement this function,
-provide an `algorithm_*()` function and a `constructor_*()` function
-that constructs a named list of arguments for `algorithm_*()`.
+provide an `algorithm` function and a `constructor` function that
+constructs a named list of arguments for `algorithm`.
 
-The following `algorithm` functions are provided:
+For coordinate estimation, the following `algorithm` functions are
+provided:
 
 - Use `estimate_coord_coa()` to implement the COA algorithm. This wraps
   `patter::coa()`;
 - Use `estimate_coord_rsp()` to implement the RSP algorithm. This wraps
   `RSP::runRSP()`;
-- Use `estimate_coord_particle()` to implement a particle algorithm. This
-  wraps `patter::pf_filter()` and `pf_smoother_two_filter()`;
+- Use `estimate_coord_particle()` to implement a particle algorithm.
+  This wraps `patter::pf_filter()` and `pf_smoother_two_filter()`;
 
-These functions are supported by in-built `constructor_*()` functions:
+These functions are supported by in-built `constructor` functions:
 
 - For `estimate_coord_coa()`, use `constructor_coa()`;
 - For `estimate_coord_rsp()`, use `constructor_rsp()`;
-- For `estimate_coord_particle()`, a custom `constructor_*()` function is
+- For `estimate_coord_particle()`, a custom `constructor` function is
   required;
 
-For custom `constructor_*()` functions, ancillary helpers are available:
+For utilisation-distribution estimation, the following `algorithm`
+functions are provided:
+
+- Use `estimate_map_pou()` to estimate probability of use;
+- Use `estimate_map_dbbmm()` to fit a dynamic Brownian movement model;
+- Use `estimate_map_dens()` to estimate a smooth spatial density;
+
+These functions are supported by in-build `constructor` functions:
+
+- Use `constructor_map_pou()` for `estimate_map_pou()`;
+- Use `constructor_map_dbbmm()` for `estimate_map_dbbmm()`;
+- Use `constructor_map_dens()` for `estimate_map_dens()`;
+
+For custom `constructor` functions, ancillary helpers are available:
 
 - See `get_input` functions (e.g., `get_dataset_detections()`) to get
   algorithm inputs;
@@ -87,10 +102,6 @@ packages is provided by `as_*()` functions:
   [`patter`](https://github.com/edwardlavender/patter) detection
   datasets to
   [`glatos`](https://github.com/ocean-tracking-network/glatos) format;
-
-## Mapping
-
-TO DO
 
 ## Visualisation
 
