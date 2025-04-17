@@ -22,9 +22,9 @@ estimate_coord_particle(forward, backward, smooth, verbose)
 
 \item{forward, backward, smooth, verbose}{Arguments for \code{\link[=estimate_coord_particle]{estimate_coord_particle()}}:
 \itemize{
-\item \code{forward} is a named \code{list} of arguments for the forward particle filter (\code{\link[=pf_filter]{pf_filter()}});
-\item \code{backward} is a named \code{list} of arguments for the backward particle filter (\code{\link[=pf_filter]{pf_filter()}});
-\item \code{smooth} is a named \code{list} of arguments for the two-filter smoother (\code{\link[=pf_smoother_two_filter]{pf_smoother_two_filter()}});
+\item \code{forward} is a named \code{list} of arguments for the forward particle filter (\code{\link[patter:pf_filter]{patter::pf_filter()}});
+\item \code{backward} is a named \code{list} of arguments for the backward particle filter (\code{\link[patter:pf_filter]{patter::pf_filter()}});
+\item \code{smooth} is a named \code{list} of arguments for the two-filter smoother (\code{\link[patter:pf_smoother_two_filter]{patter::pf_smoother_two_filter()}});
 }
 
 To implement smoothing, all arguments must be set. Use \code{smooth = list()} to implement smoothing with default arguments.
@@ -38,9 +38,9 @@ All functions return estimated coordinates in function-specific formats:
 \item For \code{\link[=estimate_coord_rsp]{estimate_coord_rsp()}}, see \code{\link[RSP:runRSP]{RSP::runRSP()}};
 \item For \code{\link[=estimate_coord_particle]{estimate_coord_particle()}}, a \code{named} list with three elements is returned:
 \itemize{
-\item \code{forward} holds the outputs from the forward particle filter (\code{\link[=pf_filter]{pf_filter()}});
-\item \code{backward} holds the outputs from the backward particle filter (\code{\link[=pf_filter]{pf_filter()}}) or is \code{NULL} if this routine was not implemented;
-\item \code{smooth} holds the outputs from the two-filter smoother (\code{\link[=pf_smoother_two_filter]{pf_smoother_two_filter()}}) or is \code{NULL} if this routine was not implemented;
+\item \code{forward} holds the outputs from the forward particle filter (\code{\link[patter:pf_filter]{patter::pf_filter()}});
+\item \code{backward} holds the outputs from the backward particle filter (\code{\link[patter:pf_filter]{patter::pf_filter()}}) or is \code{NULL} if this routine was not implemented;
+\item \code{smooth} holds the outputs from the two-filter smoother (\code{\link[patter:pf_smoother_two_filter]{patter::pf_smoother_two_filter()}}) or is \code{NULL} if this routine was not implemented;
 }
 }
 }

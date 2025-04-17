@@ -24,8 +24,8 @@ This page describes package datasets.
 }
 \details{
 \itemize{
-\item \code{\link{dat_sim_moorings}} is a \code{\link{data.table}} of simulated receiver locations (see \code{\link[patter:datasets-mefs]{patter::dat_moorings}});
-\item \code{\link{dat_sim_detections}}is a \code{\link{data.table}} of simulated detections (see \code{\link[patter:datasets-mefs]{patter::dat_moorings}});
+\item \code{\link{dat_sim_moorings}} is a \code{\link[data.table:data.table]{data.table::data.table}} of simulated receiver locations (see \code{\link[patter:datasets-mefs]{patter::dat_moorings}});
+\item \code{\link{dat_sim_detections}}is a \code{\link[data.table:data.table]{data.table::data.table}} of simulated detections (see \code{\link[patter:datasets-mefs]{patter::dat_moorings}});
 \item \code{\link[=dat_gebco_tm]{dat_gebco_tm()}} loads a \code{TransitionLayer} object from \code{\link[actel:transitionLayer]{actel::transitionLayer()}}. This is predefined to streamline examples.
 }
 }

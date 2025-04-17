@@ -18,11 +18,11 @@ lapply_qplot_coord(
 lapply_qplot_ud(.iteration, .datasets = list(), .n_plot = 4L, ...)
 }
 \arguments{
-\item{.iteration}{The iteration \code{\link{data.table}} (see \code{constructor} functions). If \code{.iteration} contains a \code{file_coord} or \code{file_ud} column, map layers (coordinates or utilisation distributions) are read from file; otherwise, they are extracted from \code{.datasets}.}
+\item{.iteration}{The iteration \code{\link[data.table:data.table]{data.table::data.table}} (see \code{constructor} functions). If \code{.iteration} contains a \code{file_coord} or \code{file_ud} column, map layers (coordinates or utilisation distributions) are read from file; otherwise, they are extracted from \code{.datasets}.}
 
 \item{.datasets}{A named \code{list} of datasets, with one element for each \code{iteration}, required if \code{iteration$file_output} is not specified:
 \itemize{
-\item For \code{\link[=lapply_qplot_coord]{lapply_qplot_coord()}}, \code{.datasets} should contain \code{coord} and (optional) \code{coordinates} elements (see \code{\link[=get_dataset_coord]{get_dataset_coord()}}). The extracted coordinates should comprise a \code{\link{data.table}} of \code{x} and \code{y} coordinates for this function.
+\item For \code{\link[=lapply_qplot_coord]{lapply_qplot_coord()}}, \code{.datasets} should contain \code{coord} and (optional) \code{coordinates} elements (see \code{\link[=get_dataset_coord]{get_dataset_coord()}}). The extracted coordinates should comprise a \code{\link[data.table:data.table]{data.table::data.table}} of \code{x} and \code{y} coordinates for this function.
 \item For \code{\link[=lapply_qplot_ud]{lapply_qplot_ud()}}, \code{.datasets} should contain a \code{ud} element  (see \code{\link[=get_dataset_ud]{get_dataset_ud()}}).
 }}
 
@@ -42,7 +42,7 @@ This functions produce quick multi-panel maps for with \code{.n_plot} panels.
 \itemize{
 \item If \code{.iteration$file_output} is specified, map layers are read into memory;
 \item Otherwise, map layers are extracted from \code{.datasets};
-\item \code{\link[=lapply_qplot_coord]{lapply_qplot_coord()}} plots background maps with coordinates ontop;
+\item \code{\link[=lapply_qplot_coord]{lapply_qplot_coord()}} plots background maps with coordinates on top;
 \item \code{\link[=lapply_qplot_ud]{lapply_qplot_ud()}} plots utilisation distributions;
 \item Map titles are defined by the row index in \code{.iteration};
 }

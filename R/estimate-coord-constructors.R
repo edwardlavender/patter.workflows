@@ -1,7 +1,7 @@
 #' @title Estimate coordinates: constructors
 #' @description `estimate_coord_*()` `constructor` functions construct a named `list` of arguments for an `estimate_coord_*()` function. 
 #' @param .sim,.datasets,.verbose,... Arguments inherited from [`proj.lapply::cl_lapply_workflow()`]:
-#' * `.sim` is a [`data.table`] row;
+#' * `.sim` is a [`data.table::data.table`] row;
 #' * `.datasets` is a named `list` of .datasets, generally used to pass iteration-specific arguments to a `constructor`;
 #' * `...` are additional static arguments passed to `constructor` for an `algorithm` function;
 #' * `.verbose` controls user outputs;
@@ -16,7 +16,7 @@
 #'      - `delta_t`: the time interval over which to calculate centres of activity (see [`estimate_coord_coa()`]);
 #' * `.datasets` should include the following elements:
 #'      - `map`: A [`terra::SpatRaster`] (see [`patter::coa()`])
-#'      - `detections_by_unit`: a `list` of acoustic detection [`data.table`]s (see [`estimate_coord_coa()`]) for each `unit_id`;
+#'      - `detections_by_unit`: a `list` of acoustic detection [`data.table::data.table`]s (see [`estimate_coord_coa()`]) for each `unit_id`;
 #'      - `moorings`: a `moorings` data.table (see [`estimate_coord_coa()`]);
 #'
 #' For [`constructor_rsp()`]:

@@ -1,12 +1,12 @@
 #' @title `ggplot` maps
 #' @description This function produces multi-panel plots of [`terra::SpatRaster`]s. It was designed to plot utilisation distributions (UDs) for multiple animals (rows) constructed by different algorithms (columns) in passive acoustic telemetry systems. UDs are expected to live on the disk.
-#' @param .mapdt  A [`data.table`] that defines panel maps with the following columns: 
+#' @param .mapdt  A [`data.table::data.table`] that defines panel maps with the following columns: 
 #' * `row`, `column` : row/column identifiers;
 #' * `file_ud`       : the path to the map, readable by [`terra::rast()`];
 #' @param .map,.coast,.poly,.moorings Spatial layers.
 #' * `.map` is a [`terra::SpatRaster`]. This is used to handle blank panels (panels where `.mapdt$file_ud` does not exist). 
 #' * (optional) `.coast`, `.poly` Simple feature polygons (or similar) that define coastline and/or other relevant boundaries (e.g., a Marine Protected Area). Objects are coerced to simple features for plotting via [`sf::st_as_sf()`].
-#' * (optional) `.moorings` A [`data.table`] of coordinates (in columns `receiver_x` and `receiver_y`). 
+#' * (optional) `.moorings` A [`data.table::data.table`] of coordinates (in columns `receiver_x` and `receiver_y`). 
 #' @param .coast_tolerance,.coast_mask Spatial operations applied to spatial layers before plotting. 
 #' * `.coast_tolerance` is a `double`, passed to [`sf::st_simplify()`]'s `dTolerance` argument to simplify the coastline before plotting (for improved speed). 
 #' * `.coast_mask` is a logical variable that defines whether or not to mask each UD by `.coast`.

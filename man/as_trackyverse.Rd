@@ -13,10 +13,10 @@ as_glatos(.detections)
 \arguments{
 \item{.map}{A \code{\link[terra:SpatRaster-class]{terra::SpatRaster}} that defines the study area. This is assumed to define the CRS of the coordinates in \code{.moorings}.}
 
-\item{.detections, .moorings}{\code{\link{patter}} \code{\link{data.table}}s.
+\item{.detections, .moorings}{\code{\link[patter:patter]{patter::patter}} \code{\link[data.table:data.table]{data.table::data.table}}s.
 \itemize{
-\item \code{.detections} is a \code{\link{data.table}} of acoustic detections (see \code{\link[patter:datasets-mefs]{patter::dat_detections}}).
-\item \code{.moorings} is a \code{\link{data.table}} of receiver positions (see \code{\link[patter:datasets-mefs]{patter::dat_moorings}}).
+\item \code{.detections} is a \code{\link[data.table:data.table]{data.table::data.table}} of acoustic detections (see \code{\link[patter:datasets-mefs]{patter::dat_detections}}).
+\item \code{.moorings} is a \code{\link[data.table:data.table]{data.table::data.table}} of receiver positions (see \code{\link[patter:datasets-mefs]{patter::dat_moorings}}).
 }}
 }
 \value{
@@ -26,12 +26,12 @@ as_glatos(.detections)
 }
 }
 \description{
-This routines convert \code{\link{patter}} \code{\link{data.table}}s into formats used by other packages, such as \code{actel} (\code{RSP}) and \code{glatos}.
+This routines convert \code{\link[patter:patter]{patter::patter}} \code{\link[data.table:data.table]{data.table::data.table}}s into formats used by other packages, such as \code{actel} (\code{RSP}) and \code{glatos}.
 }
 \details{
 \itemize{
-\item \code{\link[=as_actel]{as_actel()}} converts a \code{.detections} \code{\link{data.table}} to \code{actel} \code{explore} format. This is used in \code{\link[=constructor_rsp]{constructor_rsp()}}.
-\item \code{\link[=as_glatos]{as_glatos()}} converts a \code{.detections} \code{\link{data.table}} to a \code{glatos} \code{det} \code{\link{data.frame}} (e.g., as required in \code{\link[glatos:false_detections]{glatos::false_detections()}}).
+\item \code{\link[=as_actel]{as_actel()}} converts a \code{.detections} \code{\link[data.table:data.table]{data.table::data.table}} to \code{actel} \code{explore} format. This is used in \code{\link[=constructor_rsp]{constructor_rsp()}}.
+\item \code{\link[=as_glatos]{as_glatos()}} converts a \code{.detections} \code{\link[data.table:data.table]{data.table::data.table}} to a \code{glatos} \code{det} \code{\link{data.frame}} (e.g., as required in \code{\link[glatos:false_detections]{glatos::false_detections()}}).
 }
 }
 \author{

@@ -10,7 +10,7 @@ Description: Iterative workflows for animal-tracking analyses, with a focus on t
 License: MIT + file LICENSE
 Imports:
   data.table, 
-  patter, 
+  patter (>= 2.0.0), 
   proj.build,
   rlang, 
   terra
@@ -39,8 +39,7 @@ Remotes:
     github::edwardlavender/proj.file,
     github::edwardlavender/proj.lapply,
     github::edwardlavender/spatial.extensions,
-    github::hugomflavio/actel,
-    github::YuriNiella/RSP,
+    github::YuriNiella/RSP
 Depends: R (>= 4.1)
 Config/testthat/edition: 3
 URL: https://github.com/edwardlavender/patter.workflows/

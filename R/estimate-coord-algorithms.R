@@ -4,9 +4,9 @@
 #' * For [`estimate_coord_coa`], `...` is passed directly to [`patter::coa()`];
 #' * For [`estimate_coord_rsp`], `...` is passed directly to [`RSP::runRSP()`];
 #' @param forward,backward,smooth,verbose Arguments for [`estimate_coord_particle()`]:
-#' * `forward` is a named `list` of arguments for the forward particle filter ([`pf_filter()`]);
-#' * `backward` is a named `list` of arguments for the backward particle filter ([`pf_filter()`]);
-#' * `smooth` is a named `list` of arguments for the two-filter smoother ([`pf_smoother_two_filter()`]);
+#' * `forward` is a named `list` of arguments for the forward particle filter ([`patter::pf_filter()`]);
+#' * `backward` is a named `list` of arguments for the backward particle filter ([`patter::pf_filter()`]);
+#' * `smooth` is a named `list` of arguments for the two-filter smoother ([`patter::pf_smoother_two_filter()`]);
 #' 
 #' To implement smoothing, all arguments must be set. Use `smooth = list()` to implement smoothing with default arguments. 
 #'
@@ -17,9 +17,9 @@
 #' * For [`estimate_coord_coa()`], see [`patter::coa()`];
 #' * For [`estimate_coord_rsp()`], see [`RSP::runRSP()`];
 #' * For [`estimate_coord_particle()`], a `named` list with three elements is returned:
-#'    * `forward` holds the outputs from the forward particle filter ([`pf_filter()`]);
-#'    * `backward` holds the outputs from the backward particle filter ([`pf_filter()`]) or is `NULL` if this routine was not implemented;
-#'    * `smooth` holds the outputs from the two-filter smoother ([`pf_smoother_two_filter()`]) or is `NULL` if this routine was not implemented;
+#'    * `forward` holds the outputs from the forward particle filter ([`patter::pf_filter()`]);
+#'    * `backward` holds the outputs from the backward particle filter ([`patter::pf_filter()`]) or is `NULL` if this routine was not implemented;
+#'    * `smooth` holds the outputs from the two-filter smoother ([`patter::pf_smoother_two_filter()`]) or is `NULL` if this routine was not implemented;
 #'        
 #' @author Edward Lavender
 #' @name estimate_coord

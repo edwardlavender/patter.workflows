@@ -1,8 +1,8 @@
 #' @title Quick plots
 #' @description These functions quickly plot maps, reading map layers from memory or from file. 
-#' @param .iteration The iteration [`data.table`] (see `constructor` functions). If `.iteration` contains a `file_coord` or `file_ud` column, map layers (coordinates or utilisation distributions) are read from file; otherwise, they are extracted from `.datasets`. 
+#' @param .iteration The iteration [`data.table::data.table`] (see `constructor` functions). If `.iteration` contains a `file_coord` or `file_ud` column, map layers (coordinates or utilisation distributions) are read from file; otherwise, they are extracted from `.datasets`. 
 #' @param .datasets A named `list` of datasets, with one element for each `iteration`, required if `iteration$file_output` is not specified:
-#' * For [`lapply_qplot_coord()`], `.datasets` should contain `coord` and (optional) `coordinates` elements (see [`get_dataset_coord()`]). The extracted coordinates should comprise a [`data.table`] of `x` and `y` coordinates for this function. 
+#' * For [`lapply_qplot_coord()`], `.datasets` should contain `coord` and (optional) `coordinates` elements (see [`get_dataset_coord()`]). The extracted coordinates should comprise a [`data.table::data.table`] of `x` and `y` coordinates for this function. 
 #' * For [`lapply_qplot_ud()`], `.datasets` should contain a `ud` element  (see [`get_dataset_ud()`]).
 #' @param .n_plot An `integer` that defines the number of plots. 
 #' @param .map For [`lapply_qplot_coord()`], `.map` is a spatial layer, plotted via [`terra::plot()`], onto which coordinates are added. 
@@ -12,7 +12,7 @@
 #' This functions produce quick multi-panel maps for with `.n_plot` panels.
 #' * If `.iteration$file_output` is specified, map layers are read into memory;
 #' * Otherwise, map layers are extracted from `.datasets`;
-#' * [`lapply_qplot_coord()`] plots background maps with coordinates ontop;
+#' * [`lapply_qplot_coord()`] plots background maps with coordinates on top;
 #' * [`lapply_qplot_ud()`] plots utilisation distributions;
 #' * Map titles are defined by the row index in `.iteration`;
 #' 

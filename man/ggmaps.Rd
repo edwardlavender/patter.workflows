@@ -20,7 +20,7 @@ ggmaps(
 )
 }
 \arguments{
-\item{.mapdt}{A \code{\link{data.table}} that defines panel maps with the following columns:
+\item{.mapdt}{A \code{\link[data.table:data.table]{data.table::data.table}} that defines panel maps with the following columns:
 \itemize{
 \item \code{row}, \code{column} : row/column identifiers;
 \item \code{file_ud}       : the path to the map, readable by \code{\link[terra:rast]{terra::rast()}};
@@ -30,7 +30,7 @@ ggmaps(
 \itemize{
 \item \code{.map} is a \code{\link[terra:SpatRaster-class]{terra::SpatRaster}}. This is used to handle blank panels (panels where \code{.mapdt$file_ud} does not exist).
 \item (optional) \code{.coast}, \code{.poly} Simple feature polygons (or similar) that define coastline and/or other relevant boundaries (e.g., a Marine Protected Area). Objects are coerced to simple features for plotting via \code{\link[sf:st_as_sf]{sf::st_as_sf()}}.
-\item (optional) \code{.moorings} A \code{\link{data.table}} of coordinates (in columns \code{receiver_x} and \code{receiver_y}).
+\item (optional) \code{.moorings} A \code{\link[data.table:data.table]{data.table::data.table}} of coordinates (in columns \code{receiver_x} and \code{receiver_y}).
 }}
 
 \item{.coast_tolerance, .coast_mask}{Spatial operations applied to spatial layers before plotting.

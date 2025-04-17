@@ -1,12 +1,12 @@
 #' @title Package conversion routines
-#' @description This routines convert [`patter`] [`data.table`]s into formats used by other packages, such as `actel` (`RSP`) and `glatos`.
+#' @description This routines convert [`patter::patter`] [`data.table::data.table`]s into formats used by other packages, such as `actel` (`RSP`) and `glatos`.
 #' @param .map A [`terra::SpatRaster`] that defines the study area. This is assumed to define the CRS of the coordinates in `.moorings`.
-#' @param .detections,.moorings [`patter`] [`data.table`]s.
-#' * `.detections` is a [`data.table`] of acoustic detections (see [`patter::dat_detections`]).
-#' * `.moorings` is a [`data.table`] of receiver positions (see [`patter::dat_moorings`]).
+#' @param .detections,.moorings [`patter::patter`] [`data.table::data.table`]s.
+#' * `.detections` is a [`data.table::data.table`] of acoustic detections (see [`patter::dat_detections`]).
+#' * `.moorings` is a [`data.table::data.table`] of receiver positions (see [`patter::dat_moorings`]).
 #' @details
-#' * [`as_actel()`] converts a `.detections` [`data.table`] to `actel` `explore` format. This is used in [`constructor_rsp()`].
-#' * [`as_glatos()`] converts a `.detections` [`data.table`] to a `glatos` `det` [`data.frame`] (e.g., as required in [`glatos::false_detections()`]). 
+#' * [`as_actel()`] converts a `.detections` [`data.table::data.table`] to `actel` `explore` format. This is used in [`constructor_rsp()`].
+#' * [`as_glatos()`] converts a `.detections` [`data.table::data.table`] to a `glatos` `det` [`data.frame`] (e.g., as required in [`glatos::false_detections()`]). 
 #' @return 
 #' * [`as_actel()`] returns an output from [`actel::explore()`];
 #' * [`as_glatos()`] returns a [`data.frame`];

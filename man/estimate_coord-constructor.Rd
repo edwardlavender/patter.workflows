@@ -13,7 +13,7 @@ constructor_rsp(.sim, .datasets, .verbose, ...)
 \arguments{
 \item{.sim, .datasets, .verbose, ...}{Arguments inherited from \code{\link[proj.lapply:cl_lapply_workflow]{proj.lapply::cl_lapply_workflow()}}:
 \itemize{
-\item \code{.sim} is a \code{\link{data.table}} row;
+\item \code{.sim} is a \code{\link[data.table:data.table]{data.table::data.table}} row;
 \item \code{.datasets} is a named \code{list} of .datasets, generally used to pass iteration-specific arguments to a \code{constructor};
 \item \code{...} are additional static arguments passed to \code{constructor} for an \code{algorithm} function;
 \item \code{.verbose} controls user outputs;
@@ -42,7 +42,7 @@ For \code{\link[=constructor_coa]{constructor_coa()}}:
 \item \code{.datasets} should include the following elements:
 \itemize{
 \item \code{map}: A \code{\link[terra:SpatRaster-class]{terra::SpatRaster}} (see \code{\link[patter:coa]{patter::coa()}})
-\item \code{detections_by_unit}: a \code{list} of acoustic detection \code{\link{data.table}}s (see \code{\link[=estimate_coord_coa]{estimate_coord_coa()}}) for each \code{unit_id};
+\item \code{detections_by_unit}: a \code{list} of acoustic detection \code{\link[data.table:data.table]{data.table::data.table}}s (see \code{\link[=estimate_coord_coa]{estimate_coord_coa()}}) for each \code{unit_id};
 \item \code{moorings}: a \code{moorings} data.table (see \code{\link[=estimate_coord_coa]{estimate_coord_coa()}});
 }
 }
