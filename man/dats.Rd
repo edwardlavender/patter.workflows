@@ -3,16 +3,21 @@
 \docType{data}
 \name{dats}
 \alias{dats}
+\alias{dat_sim_paths}
 \alias{dat_sim_moorings}
 \alias{dat_sim_detections}
 \alias{dat_gebco_tm}
 \title{Datasets}
 \format{
+An object of class \code{data.table} (inherits from \code{data.frame}) with 10080 rows and 7 columns.
+
 An object of class \code{data.table} (inherits from \code{data.frame}) with 41 rows and 9 columns.
 
 An object of class \code{data.table} (inherits from \code{data.frame}) with 1328 rows and 3 columns.
 }
 \usage{
+dat_sim_paths
+
 dat_sim_moorings
 
 dat_sim_detections
@@ -24,10 +29,13 @@ This page describes package datasets.
 }
 \details{
 \itemize{
+\item \code{\link{dat_sim_paths}} is a \code{\link[data.table:data.table]{data.table::data.table}} of simulated movements trajectories.
 \item \code{\link{dat_sim_moorings}} is a \code{\link[data.table:data.table]{data.table::data.table}} of simulated receiver locations (see \code{\link[patter:datasets-mefs]{patter::dat_moorings}});
 \item \code{\link{dat_sim_detections}}is a \code{\link[data.table:data.table]{data.table::data.table}} of simulated detections (see \code{\link[patter:datasets-mefs]{patter::dat_moorings}});
 \item \code{\link[=dat_gebco_tm]{dat_gebco_tm()}} loads a \code{TransitionLayer} object from \code{\link[actel:transitionLayer]{actel::transitionLayer()}}. This is predefined to streamline examples.
 }
+
+For simulation details, see the \href{https://github.com/edwardlavender/patter.workflows/blob/main/data-raw/add-data.R}{add-data.R} script.
 }
 \author{
 Edward Lavender

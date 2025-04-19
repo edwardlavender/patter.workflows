@@ -11,7 +11,7 @@ library(lubridate)
 library(ggplot2)
 library(glue)
 # Spatial packages
-# * We proactively load these to avoid R/Julia issues
+# * We pro-actively load these to avoid R/Julia issues
 library(sf)
 library(terra)
 library(spatial.extensions) # overwriteRaster()
@@ -21,15 +21,22 @@ library(patter)
 library(proj.lapply) # cl_lapply_workflow
 library(proj.file)   # dirs.create, dir_cleanup()
 
-
-#### ---------------------------------------------------------------------####
-#### Workflow set up -----------------------------------------------------####
-#### ---------------------------------------------------------------------####
-
 #### Load data
 map        <- dat_gebco()
+coast      <- dat_coast()
+paths      <- dat_sim_paths
 detections <- dat_sim_detections
 moorings   <- dat_sim_moorings
+
+#### Set options and global parameters
+op <- options(terra.pal = terrain.colors(256L, rev = TRUE))
+bb <- terra::ext(map) - 3000
+xlim <- bb[1:2]
+ylim <- bb[3:4]
+
+
+#### Workflow set up -----------------------------------------------------####
+#### ---------------------------------------------------------------------####
 
 #### Set up Julia
 julia_connect()
@@ -72,12 +79,13 @@ detections |>
 # (in which we can optionally write outputs)
 unitsets <- 
   unitsets |>
-  mutate(folder_home = file.path(tempdir(), "real", "runs",
+  mutate(folder_home = file.path(tempdir(), "data", "output", "sim", "runs",
                                  individual_id, week_id),
          folder_home_coa = file.path(folder_home, "coa"),
          folder_home_rsp = file.path(folder_home, "rsp"),
          folder_home_patter = file.path(folder_home, "patter")) |>
   as.data.table()
+dirs.create(file.path(tempdir(), "data", "input", "sim"))
 dirs.create(unitsets$folder_home_coa)
 dirs.create(unitsets$folder_home_rsp)
 dirs.create(unitsets$folder_home_patter)
@@ -90,7 +98,8 @@ dirs.create(unitsets$folder_home_patter)
 #### Prepare iteration dataset
 # Define parameters (e.g., 'best-guess', 'restrictive', 'flexible')
 # (We can use multiple settings to examine sensitivity)
-pars <- data.table(parameter_id = 1:3L, 
+pars <- data.table(sensitivity = c("best", "ac(-)", "ac(+)"), 
+                   parameter_id = 1:3L, 
                    delta_t = c("2 hours", "1 hour", "4 hours"))
 # Define iteration 
 iteration <- 
@@ -99,10 +108,10 @@ iteration <-
   cross_join(pars) |> 
   mutate(index = row_number(),
          folder_coord = file.path(folder_home, "coord", parameter_id), 
-         folder_pou = file.path(folder_home, "pou", parameter_id)) |> 
+         folder_dens = file.path(folder_home, "dens", parameter_id)) |> 
   as.data.table()
 dirs.create(iteration$folder_coord)
-dirs.create(iteration$folder_pou)
+dirs.create(iteration$folder_dens)
 
 #### Compute coordinates and maps and write to file
 
@@ -121,17 +130,20 @@ list.files(iteration$folder_coord)
 lapply_qplot_coord(iteration, .map = map)
 
 ## (B) Write maps to file
-iteration[, file_ud := file.path(folder_pou, "map_pou.tif")]
+iteration[, file_ud := file.path(folder_dens, "map_dens.tif")]
 iteration[, file_output := file_ud]
-dpou     <- list(map = map, coord = coord_list)
-pou_list <- cl_lapply_workflow(.iteration = iteration, 
-                               .datasets = dpou, 
-                               .constructor = constructor_map_pou, 
-                               .algorithm = estimate_map_pou, 
+ddens     <- list(map = map, coord = coord_list)
+dens_list <- cl_lapply_workflow(.iteration = iteration, 
+                               .datasets = ddens, 
+                               .constructor = constructor_map_dens, 
+                               .algorithm = estimate_map_dens, 
                                .write = overwriteRaster)
 # Examine maps
-list.files(iteration$folder_pou)
+list.files(iteration$folder_dens)
 lapply_qplot_ud(iteration)
+
+# Record iteration
+iteration_coa <- copy(iteration)
 
 
 #### ---------------------------------------------------------------------####
@@ -140,7 +152,8 @@ lapply_qplot_ud(iteration)
 
 #### Define iteration dataset
 # Define parameters
-pars <- data.table(parameter_id = 1:3L, 
+pars <- data.table(sensitivity = c("best", "ac(-)", "ac(+)"), 
+                   parameter_id = 1:3L, 
                    er.ad = c(20, 10, 40))
 # Define iteration
 iteration <- 
@@ -149,10 +162,10 @@ iteration <-
   cross_join(pars) |> 
   mutate(index = row_number(),
          folder_coord = file.path(folder_home, "coord", parameter_id), 
-         folder_pou = file.path(folder_home, "pou", parameter_id)) |> 
+         folder_dens = file.path(folder_home, "dens", parameter_id)) |> 
   as.data.table()
 dirs.create(iteration$folder_coord)
-dirs.create(iteration$folder_pou)
+dirs.create(iteration$folder_dens)
 
 #### Compute coordinates and maps and write to file
 
@@ -181,13 +194,13 @@ lapply_qplot_coord(iteration,
                    .map = map)
 
 ## (B) Write maps to file
-iteration[, file_ud := file.path(folder_pou, "map_pou.tif")]
+iteration[, file_ud := file.path(folder_dens, "map_dens.tif")]
 iteration[, file_output := file_ud]
 map_ll   <- map |> terra::project("EPSG:4326")
 water_ll <- terra::mask(terra::setValues(map_ll, TRUE), map_ll)
-dpou     <- list(map = map, coord = coord_list)
-pou_list <- cl_lapply_workflow(.iteration   = iteration,
-                               .datasets    = dpou,
+ddens     <- list(map = map, coord = coord_list)
+dens_list <- cl_lapply_workflow(.iteration   = iteration,
+                               .datasets    = ddens,
                                .constructor = constructor_map_dbbmm, 
                                .algorithm   = estimate_map_dbbmm, 
                                # 'static' arguments:
@@ -195,8 +208,11 @@ pou_list <- cl_lapply_workflow(.iteration   = iteration,
                                UTM = 29, 
                                .write = overwriteRaster)
 # Examine maps
-list.files(iteration$folder_pou)
+list.files(iteration$folder_dens)
 lapply_qplot_ud(iteration)
+
+# Record iteration
+iteration_rsp <- copy(iteration)
 
 
 #### ---------------------------------------------------------------------####
@@ -230,10 +246,10 @@ iteration <-
   cross_join(pars) |> 
   mutate(index = row_number(),
          folder_coord = file.path(folder_home, "coord", parameter_id), 
-         folder_pou = file.path(folder_home, "pou", parameter_id)) |> 
+         folder_dens = file.path(folder_home, "dens", parameter_id)) |> 
   as.data.table()
 dirs.create(iteration$folder_coord)
-dirs.create(iteration$folder_pou)
+dirs.create(iteration$folder_dens)
 
 #### Define custom estimate_coord constructor function 
 constructor_ac <- function(.sim, .datasets, .verbose, ...) {
@@ -329,23 +345,71 @@ lapply_qplot_coord(iteration,
                    .map = map)
 
 ## (B) Write maps to file
-iteration[, file_ud := file.path(folder_pou, "map_pou.tif")]
+iteration[, file_ud := file.path(folder_dens, "map_dens.tif")]
 iteration[, file_output := file_ud]
 iteration <- iteration[file.exists(file_coord), ]
-dpou      <- list(map = map, 
+ddens      <- list(map = map, 
                   coord = coord_list, 
                   coordinates = function(x) x$smooth$states)
-pou_list  <- cl_lapply_workflow(.iteration = iteration, 
-                                .datasets = dpou, 
-                                .constructor = constructor_map_pou, 
-                                .algorithm = estimate_map_pou, 
+dens_list  <- cl_lapply_workflow(.iteration = iteration, 
+                                .datasets = ddens, 
+                                .constructor = constructor_map_dens, 
+                                .algorithm = estimate_map_dens, 
                                 .write = overwriteRaster)
 # Examine maps
-list.files(iteration$folder_pou)
+list.files(iteration$folder_dens)
 lapply_qplot_ud(iteration)
+
+# Record iteration
+iteration_patter <- copy(iteration)
+
+
+#### ---------------------------------------------------------------------####
+#### Synthesis -----------------------------------------------------------####
+#### ---------------------------------------------------------------------####
+
+#### Plot simulated pattern of space use
+pp <- par(mfrow = c(1, 2))
+cl_lapply(split(paths, paths$individual_id), function(d) {
+  ud <- map_dens(.map = map, .coord = d, .discretise = TRUE, .plot = FALSE)$ud 
+  terra::plot(ud, legend = FALSE)
+  patter:::add_sp_path(x = d$x, y = d$y, length = 0.005, lwd = 0.25)
+})
+par(pp)
+
+#### Plot 'best-guess maps
+# COA algorithm
+iteration_coa |> 
+  filter(sensitivity == "best") |> 
+  select(row = individual_id, column = week_id, file_ud) |> 
+  ggmaps(.map = map, 
+         .coast = coast, .coast_mask = TRUE, 
+         .moorings = moorings,
+         .xlim = xlim, .ylim = ylim)
+# RSP algorithm
+iteration_rsp |> 
+  filter(sensitivity == "best") |> 
+  select(row = individual_id, column = week_id, file_ud) |> 
+  ggmaps(.map = map, 
+         .coast = coast, .coast_mask = TRUE,
+         .moorings = moorings,
+         .xlim = xlim, .ylim = ylim)
+# Particle algorithms
+# * NB: Note for speed above we did not model the whole timeline  
+iteration_patter |> 
+  filter(sensitivity == "best") |> 
+  select(row = individual_id, column = week_id, file_ud) |> 
+  ggmaps(.map = map, 
+         .coast = coast, .coast_mask = TRUE, 
+         .moorings = moorings,
+         .xlim = xlim, .ylim = ylim)
+
+#### Plot sensitivity analyses
+# We leave this as an exercise for the reader!
 
 
 dir_cleanup(unitsets$folder_home)
+options(op)
 
 
 #### ---------------------------------------------------------------------####
