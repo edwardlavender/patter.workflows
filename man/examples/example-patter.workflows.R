@@ -337,7 +337,9 @@ coord_list <-
   cl_lapply_workflow(.iteration   = iteration,
                      .datasets    = datasets,
                      .constructor = constructor_ac, 
-                     .algorithm   = estimate_coord_particle)
+                     .algorithm   = estimate_coord_particle, 
+                     .trials      = trials_particle, 
+                     .success     = success_particle)
 # Examine coordinates
 list.files(iteration$folder_coord)
 lapply_qplot_coord(iteration, 

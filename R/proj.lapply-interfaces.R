@@ -1,9 +1,16 @@
-#' @title Configuration options for iterative workflows
+#' @title Additional routines for iterative workflows with `proj.lapply`
 #' @description These functions provide additional configure options for selected routines. 
 #' @param .cl An `integer` that defines the number of cores for a parallelised operation. 
+#' @param .x The output of a call to [`estimate_coord_particle()`].
 #' @details 
 #' * [`config_particle()`] configures sockets for [`estimate_coord_particle()`]. The function connects to `Julia` on each socket (assuming `JULIA` options are set globally) and checks for CPU oversubscription. 
+#' * [`trials_particle()`] extracts `.x$smooth$callstats$n_iter`.
+#' * [`success_particle()`] extracts `.x$smooth$callstats$convergence`.
 #' @author Edward Lavender
+#' @name config
+NULL
+
+#' @rdname config
 #' @export
 
 config_particle <- function(.cl) {
@@ -22,3 +29,16 @@ config_particle <- function(.cl) {
   nothing()
 }
 
+#' @rdname config
+#' @export
+
+trials_particle <- function(.x) {
+.x$smooth$callstats$n_iter
+}
+
+#' @rdname config
+#' @export
+
+success_particle <- function(.x) {
+  .x$smooth$callstats$convergence
+}
