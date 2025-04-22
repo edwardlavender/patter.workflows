@@ -10,18 +10,23 @@ NULL
 #' @rdname config
 #' @export
 
-particle_startup <- function(.sim, .cl) {
+particle_startup <- function(.sim = NULL, .cl) {
   rlang::check_installed(c("glue", "JuliaCall", "parallel"))
   # Reconnect to Julia 
   # * We assume Julia options are set globally 
   julia_connect(.socket = TRUE)
   # Check the number of threads in Julia 
   cl_julia <- julia_eval("Threads.nthreads()")
+  # Check the total number of cores used
+  cl_used <- .cl * cl_julia
   # Check the total number of cores available 
   cl_total <- parallel::detectCores()
-  # Throw error for CPU oversubscription 
-  msg("Using {.cl} R processes, each with {cl_julia} threads (i.e., {.cl * cl_julia} / {cl_total} detected cores).", 
+  # Report usage to user
+  msg("Using {.cl} R processes, each with {cl_julia} threads (i.e., {cl_used} / {cl_total} detected cores).", 
       .envir = environment())
-  abort("CPU oversubscription is not allowed.")
+  # Throw error for CPU oversubscription 
+  if (cl_used > cl_total) {
+    abort("CPU oversubscription is not allowed.")
+  }
   nothing()
 }

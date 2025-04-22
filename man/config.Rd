@@ -5,7 +5,7 @@
 \alias{particle_startup}
 \title{Additional routines for iterative workflows with \code{proj.lapply}}
 \usage{
-particle_startup(.sim, .cl)
+particle_startup(.sim = NULL, .cl)
 }
 \arguments{
 \item{.sim, .cl}{Arguments inherited from \code{\link[proj.lapply:cl_lapply_workflow]{proj.lapply::cl_lapply_workflow()}}.}
