@@ -2,30 +2,20 @@
 % Please edit documentation in R/proj.lapply-interfaces.R
 \name{config}
 \alias{config}
-\alias{config_particle}
-\alias{trials_particle}
-\alias{success_particle}
+\alias{particle_startup}
 \title{Additional routines for iterative workflows with \code{proj.lapply}}
 \usage{
-config_particle(.cl)
-
-trials_particle(.x)
-
-success_particle(.x)
+particle_startup(.sim, .cl)
 }
 \arguments{
-\item{.cl}{An \code{integer} that defines the number of cores for a parallelised operation.}
-
-\item{.x}{The output of a call to \code{\link[=estimate_coord_particle]{estimate_coord_particle()}}.}
+\item{.sim, .cl}{Arguments inherited from \code{\link[proj.lapply:cl_lapply_workflow]{proj.lapply::cl_lapply_workflow()}}.}
 }
 \description{
 These functions provide additional configure options for selected routines.
 }
 \details{
 \itemize{
-\item \code{\link[=config_particle]{config_particle()}} configures sockets for \code{\link[=estimate_coord_particle]{estimate_coord_particle()}}. The function connects to \code{Julia} on each socket (assuming \code{JULIA} options are set globally) and checks for CPU oversubscription.
-\item \code{\link[=trials_particle]{trials_particle()}} extracts \code{.x$smooth$callstats$n_iter}.
-\item \code{\link[=success_particle]{success_particle()}} extracts \code{.x$smooth$callstats$convergence}.
+\item \code{\link[=particle_startup]{particle_startup()}} configures sockets for \code{\link[=estimate_coord_particle]{estimate_coord_particle()}}. The function connects to \code{Julia} on each socket (assuming \code{JULIA} options are set globally) and checks for CPU oversubscription.
 }
 }
 \author{

@@ -45,21 +45,26 @@ estimate_coord_rsp <- function(...) {
 estimate_coord_particle <- function(forward, backward, smooth, verbose) {
   
   #### Initialise
-  rlang::check_installed("proj.lapply")
-  coffee()
   fwd <- bwd <- smo <- NULL
   
   #### Implement forward filter
+  # Run forward filter
   cat_do("... (1) Implementing forward filter...\n", .verbose = verbose)
   fwd <- do.call(pf_filter, forward)
+  # Record success
+  # * Use pf_callstat() as if forward$.collect = FALSE, fwd is NULL
+  success <- pf_callstat(.x = fwd, 
+                         .fun = "pf_filter", .direction = "forward", 
+                         .stat = "convergence")
   
   #### Implement backward filter 
-  success <- fwd$callstats$convergence
   if (success & !is.null(backward)) {
     cat_do("\n... (2) Implementing backward filter...\n", .verbose = verbose)
     backward.direction <- "backward"
     bwd                <- do.call(pf_filter, backward)
-    success            <- bwd$callstats$convergence
+    success <- pf_callstat(.x = bwd, 
+                           .fun = "pf_filter", .direction = "backward", 
+                           .stat = "convergence")
   }
   
   #### Implement smoothing 

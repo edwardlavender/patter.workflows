@@ -344,13 +344,12 @@ iteration[, file_coord := file.path(folder_coord, "coord.qs")]
 iteration[, file_output := file_coord]
 set_vmap(.map = map, .mobility = pars$mobility[1])
 # Estimate coordinates
+# * NB we could specify `.trials` and `.success` here
 coord_list <- 
   cl_lapply_workflow(.iteration   = iteration,
                      .datasets    = datasets,
                      .constructor = constructor_ac, 
-                     .algorithm   = estimate_coord_particle, 
-                     .trials      = trials_particle, 
-                     .success     = success_particle)
+                     .algorithm   = estimate_coord_particle)
 # Examine coordinates
 list.files(iteration$folder_coord)
 lapply_qplot_coord(iteration, 
