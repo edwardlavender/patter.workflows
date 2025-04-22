@@ -27,6 +27,7 @@ glue <- glue::glue
 
 # JuliaCall
 julia_command <- JuliaCall::julia_command
+julia_eval    <- JuliaCall::julia_eval
 
 # spatial.extensions
 spatNormalise <- spatial.extensions::spatNormalise

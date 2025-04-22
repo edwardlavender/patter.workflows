@@ -25,6 +25,7 @@ Suggests:
     JuliaCall,
     lifecycle,
     lubridate,
+    parallel,
     proj.file,
     RSP,
     qs,

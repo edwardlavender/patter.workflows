@@ -16,6 +16,7 @@
 #' @importFrom graphics points
 #' 
 #' @importFrom patter coa
+#' @importFrom patter julia_connect
 #' @importFrom patter pf_filter
 #' @importFrom patter pf_smoother_two_filter
 #' @importFrom patter map_pou
@@ -27,6 +28,7 @@
 #' @importFrom proj.build cat_setup
 #' @importFrom proj.build check_names
 #' @importFrom proj.build list_merge
+#' @importFrom proj.build msg
 #' @importFrom proj.build nothing
 #' @importFrom proj.build warn
 #' 
