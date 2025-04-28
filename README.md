@@ -46,6 +46,14 @@ devtools::install_github("edwardlavender/patter.workflows",
                          build_vignettes = rmarkdown::pandoc_available())
 ```
 
+For installation on Ubuntu/Debian, the `igraph` `libglpk-dev` dependency
+is currently required:
+
+``` bash
+# Install libglpk-dev for igraph 
+sudo apt install libglpk-dev
+```
+
 3.  **For examples**, see `?example-patter.workflows`.
 
 # Functionality
