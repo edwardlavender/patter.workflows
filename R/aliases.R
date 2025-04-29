@@ -30,7 +30,7 @@ julia_command <- JuliaCall::julia_command
 julia_eval    <- JuliaCall::julia_eval
 
 # spatial.extensions
-spatNormalise <- spatial.extensions::spatNormalise
+# spatNormalise <- spatial.extensions::spatNormalise
 
 # proj.lapply
 coffee <- proj.lapply::coffee

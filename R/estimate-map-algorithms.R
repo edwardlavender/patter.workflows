@@ -43,12 +43,12 @@ estimate_map_dbbmm <- function(map, ...) {
   dbb <- dbb$dbbmm[[1]]
   dbb <- terra::rast(dbb)
   if (terra::nlyr(dbb) > 1L) {
-    dbb <- spatNormalise(terra::app(dbb, "sum"))
+    dbb <- spatial.extensions::spatNormalise(terra::app(dbb, "sum"))
   }
   # Resample RSP onto map grid for consistency
   ud <- terra::project(dbb, terra::crs(map))
   ud <- terra::resample(ud, map)
   ud <- terra::mask(ud, map)
-  spatNormalise(ud)
+  spatial.extensions::spatNormalise(ud)
 }
 
