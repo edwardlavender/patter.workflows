@@ -10,29 +10,29 @@ Description: Iterative workflows for animal-tracking analyses, with a focus on t
 License: MIT + file LICENSE
 Imports:
   data.table, 
+  dplyr,
+  glue, 
+  ggplot2,
+  JuliaCall,
   patter (>= 2.0.0), 
   proj.build,
   rlang, 
+  spatial.extensions,
   terra
 Suggests:
     actel,
     cli,
-    dplyr,
     dtplyr,
-    glue, 
-    ggplot2,
     grDevices,
-    JuliaCall,
     lifecycle,
     lubridate,
     parallel,
     proj.file,
+    proj.lapply,
     RSP,
     qs,
     scales,
     sf,
-    proj.lapply,
-    spatial.extensions,
     spelling,
     testthat (>= 3.0.0)
 Remotes:

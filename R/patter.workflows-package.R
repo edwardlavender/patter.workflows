@@ -11,9 +11,31 @@
 #' @importFrom data.table setDT
 #' @importFrom data.table .N
 #' @importFrom data.table :=
+#' 
+#' @importFrom dplyr filter
+#' @importFrom dplyr mutate
+#'
+#' @importFrom ggplot2 aes
+#' @importFrom ggplot2 coord_sf
+#' @importFrom ggplot2 element_blank
+#' @importFrom ggplot2 facet_wrap
+#' @importFrom ggplot2 geom_point
+#' @importFrom ggplot2 geom_raster
+#' @importFrom ggplot2 geom_sf
+#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 scale_fill_identity
+#' @importFrom ggplot2 theme
+#' @importFrom ggplot2 theme_bw
+#' @importFrom ggplot2 xlab
+#' @importFrom ggplot2 ylab
+#' 
+#' @importFrom glue glue
 #'
 #' @importFrom graphics par
 #' @importFrom graphics points
+#' 
+#' @importFrom JuliaCall julia_command
+#' @importFrom JuliaCall julia_eval
 #' 
 #' @importFrom patter coa
 #' @importFrom patter julia_connect
@@ -33,5 +55,7 @@
 #' @importFrom proj.build warn
 #' 
 #' @importFrom rlang .data
+#' 
+#' @importFrom spatial.extensions spatNormalise
 
 NULL
