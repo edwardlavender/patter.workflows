@@ -207,7 +207,7 @@ ggmaps <- function(.mapdt,
   if (nrow(.mapdt) > 1L) {
     p <- 
       p +  
-      facet_wrap(row ~ column, drop = FALSE) + 
+      facet_wrap(row ~ column, nrow = n_row, ncol = n_col, drop = FALSE) + 
       theme(axis.text = element_blank(), 
             axis.ticks = element_blank(), 
             panel.grid = element_blank(), 
