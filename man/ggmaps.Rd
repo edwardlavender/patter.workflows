@@ -12,6 +12,7 @@ ggmaps(
   .moorings = NULL,
   .coast_tolerance = NULL,
   .coast_mask = FALSE,
+  .map_mask_zero = FALSE,
   .xlim = NULL,
   .ylim = NULL,
   .zlim = NULL,
@@ -38,6 +39,8 @@ ggmaps(
 \item \code{.coast_tolerance} is a \code{double}, passed to \code{\link[sf:geos_unary]{sf::st_simplify()}}'s \code{dTolerance} argument to simplify the coastline before plotting (for improved speed).
 \item \code{.coast_mask} is a logical variable that defines whether or not to mask each UD by \code{.coast}.
 }}
+
+\item{.map_mask_zero}{A \code{logical} variable that defines whether or not to set grid cells with a value of zero to \code{NA}. Under the default colour scheme, these cells then appear in white.}
 
 \item{.xlim, .ylim, .zlim}{(optional) Axis limits.}
 

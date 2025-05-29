@@ -10,6 +10,7 @@
 #' @param .coast_tolerance,.coast_mask Spatial operations applied to spatial layers before plotting. 
 #' * `.coast_tolerance` is a `double`, passed to [`sf::st_simplify()`]'s `dTolerance` argument to simplify the coastline before plotting (for improved speed). 
 #' * `.coast_mask` is a logical variable that defines whether or not to mask each UD by `.coast`.
+#' @param .map_mask_zero A `logical` variable that defines whether or not to set grid cells with a value of zero to `NA`. Under the default colour scheme, these cells then appear in white. 
 #' @param .xlim,.ylim,.zlim (optional) Axis limits. 
 #' @param .png_args (optional) A named `list` of arguments, passed to [`grDevices::png()`], to write the image to file.  
 #' @param .verbose User output control. 
@@ -26,6 +27,7 @@ ggmaps <- function(.mapdt,
                    .poly = NULL,
                    .moorings = NULL,
                    .coast_tolerance = NULL, .coast_mask = FALSE, 
+                   .map_mask_zero = FALSE,
                    .xlim = NULL, .ylim = NULL, .zlim = NULL, 
                    .png_args = NULL, 
                    .verbose = TRUE) {
@@ -72,6 +74,9 @@ ggmaps <- function(.mapdt,
       r <- terra::rast(d$file_ud)
       if (!is.null(.coast) & .coast_mask) {
         r <- terra::mask(r, .coast, inverse = TRUE, touches = FALSE)
+      }
+      if (.map_mask_zero) {
+        r <- terra::classify(r, cbind(0, NA))
       }
       # Get map coordinates via as.data.frame() or terra::spatSample() 
       rdt <- as.data.frame(r, xy = TRUE) 
