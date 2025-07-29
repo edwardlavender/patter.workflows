@@ -72,5 +72,23 @@ ggmaps(mapdt,
        .coast = coast, .coast_mask = TRUE,
        .moorings = dat_sim_moorings)
 
+# Add movement path(s)
+# a) Define example movement paths for a couple of rows/columns
+paths <- rbind(
+  data.table(row = "A", column = 1, 
+             timestep = 1:3, 
+             x = c(706864.4, 709374.7, 708224.2), 
+             y = c(6250694, 6256238, 6264606)),
+  data.table(row = "B", column = 2, 
+             timestep = 1:3, 
+             x = c(699333.5, 699281.2, 701373.1), 
+             y = c(6268266, 6266645, 6267325)))
+# b) Plot maps with movement paths
+ggmaps(mapdt, 
+       .map = map, .xlim = xlim, .ylim = ylim,
+       .coast = coast, .coast_mask = TRUE,
+       .moorings = dat_sim_moorings, 
+       .path = paths)
+
 
 proj.file::dir_cleanup(folder)

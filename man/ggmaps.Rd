@@ -10,6 +10,7 @@ ggmaps(
   .coast = NULL,
   .poly = NULL,
   .moorings = NULL,
+  .path = NULL,
   .coast_tolerance = NULL,
   .coast_mask = FALSE,
   .map_mask_zero = FALSE,
@@ -34,6 +35,15 @@ ggmaps(
 \item (optional) \code{.moorings} A \code{\link[data.table:data.table]{data.table::data.table}} of coordinates (in columns \code{receiver_x} and \code{receiver_y}).
 }}
 
+\item{.path}{A \code{\link[data.table:data.table]{data.table::data.table}} with movement path(s). This must contain the following columns:
+\itemize{
+\item \code{row}, \code{column} : row/column identifiers, as for \code{.mapdt};
+\item \code{timestep}      : an \code{integer} vector of time steps for each position along a path;
+\item \code{x}, \code{y}        : path coordinates on the \code{.map};
+}
+
+Note that only a subset of \code{row}/\code{column} combinations in \code{.mapdt} may be associated with paths. \code{row}/\code{column} combinations not in \code{.mapdt} are dropped with a \code{\link{warning}}.}
+
 \item{.coast_tolerance, .coast_mask}{Spatial operations applied to spatial layers before plotting.
 \itemize{
 \item \code{.coast_tolerance} is a \code{double}, passed to \code{\link[sf:geos_unary]{sf::st_simplify()}}'s \code{dTolerance} argument to simplify the coastline before plotting (for improved speed).
@@ -52,7 +62,7 @@ ggmaps(
 This function produces multi-panel plots of \code{\link[terra:SpatRaster-class]{terra::SpatRaster}}s. It was designed to plot utilisation distributions (UDs) for multiple animals (rows) constructed by different algorithms (columns) in passive acoustic telemetry systems. UDs are expected to live on the disk.
 }
 \details{
-By default, \code{.zlim} is defined for each map between the minimum and maximum values of that map, unless specified. The colour scheme is inherited from \code{getOption(terra.pal)}, if specified, or set to \code{grDevices::terrain.colors(256L, rev = TRUE)} otherwise. Graphical properties for \code{.coast} and \code{.moorings} are set internally. \code{.poly} is added as a line. A \code{col} column can be included to set polygon colour; other properties are set internally. Blank panels (without a UD) are produced for any \code{.mapdt$file_ud} that doesn't exist. If \code{.coast}, \code{.poly} and/or \code{.moorings} are specified, these spatial layers are rendered partially transparent on such panels. Submit an issue request for additional customisation options.
+By default, \code{.zlim} is defined for each map between the minimum and maximum values of that map, unless specified. The colour scheme is inherited from \code{getOption(terra.pal)}, if specified, or set to \code{grDevices::terrain.colors(256L, rev = TRUE)} otherwise. Graphical properties for \code{.coast} and \code{.moorings} are set internally. \code{.poly} is added as a line. A \code{col} column can be included to set polygon colour; other properties are set internally. Blank panels (without a UD) are produced for any \code{.mapdt$file_ud} that doesn't exist. If \code{.coast}, \code{.poly} and/or \code{.moorings} are specified, these spatial layers are rendered partially transparent on such panels. \code{.path}(s) are added afterwards, coloured by timestep. Submit an issue request for additional customisation options.
 }
 \examples{
 library(data.table)
@@ -128,6 +138,24 @@ ggmaps(mapdt,
        .map = map, .xlim = xlim, .ylim = ylim,
        .coast = coast, .coast_mask = TRUE,
        .moorings = dat_sim_moorings)
+
+# Add movement path(s)
+# a) Define example movement paths for a couple of rows/columns
+paths <- rbind(
+  data.table(row = "A", column = 1, 
+             timestep = 1:3, 
+             x = c(706864.4, 709374.7, 708224.2), 
+             y = c(6250694, 6256238, 6264606)),
+  data.table(row = "B", column = 2, 
+             timestep = 1:3, 
+             x = c(699333.5, 699281.2, 701373.1), 
+             y = c(6268266, 6266645, 6267325)))
+# b) Plot maps with movement paths
+ggmaps(mapdt, 
+       .map = map, .xlim = xlim, .ylim = ylim,
+       .coast = coast, .coast_mask = TRUE,
+       .moorings = dat_sim_moorings, 
+       .path = paths)
 
 
 proj.file::dir_cleanup(folder)

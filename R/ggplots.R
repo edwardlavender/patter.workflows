@@ -7,6 +7,12 @@
 #' * `.map` is a [`terra::SpatRaster`]. This is used to handle blank panels (panels where `.mapdt$file_ud` does not exist). 
 #' * (optional) `.coast`, `.poly` Simple feature polygons (or similar) that define coastline and/or other relevant boundaries (e.g., a Marine Protected Area). Objects are coerced to simple features for plotting via [`sf::st_as_sf()`].
 #' * (optional) `.moorings` A [`data.table::data.table`] of coordinates (in columns `receiver_x` and `receiver_y`). 
+#' @param .path A [`data.table::data.table`] with movement path(s). This must contain the following columns:
+#' * `row`, `column` : row/column identifiers, as for `.mapdt`;
+#' * `timestep`      : an `integer` vector of time steps for each position along a path;
+#' * `x`, `y`        : path coordinates on the `.map`;
+#' 
+#' Note that only a subset of `row`/`column` combinations in `.mapdt` may be associated with paths. `row`/`column` combinations not in `.mapdt` are dropped with a [`warning`].
 #' @param .coast_tolerance,.coast_mask Spatial operations applied to spatial layers before plotting. 
 #' * `.coast_tolerance` is a `double`, passed to [`sf::st_simplify()`]'s `dTolerance` argument to simplify the coastline before plotting (for improved speed). 
 #' * `.coast_mask` is a logical variable that defines whether or not to mask each UD by `.coast`.
@@ -15,7 +21,7 @@
 #' @param .png_args (optional) A named `list` of arguments, passed to [`grDevices::png()`], to write the image to file.  
 #' @param .verbose User output control. 
 #' @details
-#' By default, `.zlim` is defined for each map between the minimum and maximum values of that map, unless specified. The colour scheme is inherited from `getOption(terra.pal)`, if specified, or set to `grDevices::terrain.colors(256L, rev = TRUE)` otherwise. Graphical properties for `.coast` and `.moorings` are set internally. `.poly` is added as a line. A `col` column can be included to set polygon colour; other properties are set internally. Blank panels (without a UD) are produced for any `.mapdt$file_ud` that doesn't exist. If `.coast`, `.poly` and/or `.moorings` are specified, these spatial layers are rendered partially transparent on such panels. Submit an issue request for additional customisation options. 
+#' By default, `.zlim` is defined for each map between the minimum and maximum values of that map, unless specified. The colour scheme is inherited from `getOption(terra.pal)`, if specified, or set to `grDevices::terrain.colors(256L, rev = TRUE)` otherwise. Graphical properties for `.coast` and `.moorings` are set internally. `.poly` is added as a line. A `col` column can be included to set polygon colour; other properties are set internally. Blank panels (without a UD) are produced for any `.mapdt$file_ud` that doesn't exist. If `.coast`, `.poly` and/or `.moorings` are specified, these spatial layers are rendered partially transparent on such panels. `.path`(s) are added afterwards, coloured by timestep. Submit an issue request for additional customisation options. 
 #' 
 #' @example man/examples/example-ggplots.R
 #' @author Edward Lavender
@@ -26,6 +32,7 @@ ggmaps <- function(.mapdt,
                    .coast = NULL, 
                    .poly = NULL,
                    .moorings = NULL,
+                   .path = NULL,
                    .coast_tolerance = NULL, .coast_mask = FALSE, 
                    .map_mask_zero = FALSE,
                    .xlim = NULL, .ylim = NULL, .zlim = NULL, 
@@ -166,6 +173,19 @@ ggmaps <- function(.mapdt,
       as.data.table()
   }
 
+  # Process .path
+  if (!is.null(.path)) {
+    # .path must contain row/column plus timestep and x and y coordinates
+    .path <- as.data.table(.path)
+    check_names(.path, c("row", "column", "timestep", "x", "y"))
+    # .path shouldn't contain row/columns not in .mapdt
+    n0 <- nrow(.path)
+    .path <- .path[.path$row %in% .mapdt$row & .path$column %in% .mapdt$column, ]
+    if (n0 != nrow(.path)) {
+      warn(".path rows/columns not in mapdt are dropped.")
+    }
+  }
+  
   # Define map limits
   if (is.null(.xlim)) {
     .xlim <- terra::ext(.map)[1:2]
@@ -200,6 +220,12 @@ ggmaps <- function(.mapdt,
   if (!is.null(.moorings)) {
     p <- p + geom_point(data = .moorings, aes(.data$receiver_x, .data$receiver_y), 
                         shape = 4, size = 0.2, stroke = 0.2) 
+  }
+  
+  # Add .path(s)
+  if (!is.null(.path)) {
+    p <- p + geom_path(data = .path, aes(.data$x, .data$y, colour = .data$timestep)) + 
+      scale_colour_gradientn(colours = viridis::magma(100)) 
   }
   
   # Tidy ggplot
