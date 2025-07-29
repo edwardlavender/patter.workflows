@@ -9,10 +9,12 @@
 #' @importFrom data.table data.table
 #' @importFrom data.table rbindlist
 #' @importFrom data.table setDT
+#' @importFrom data.table .GRP
 #' @importFrom data.table .N
 #' @importFrom data.table :=
 #' 
 #' @importFrom dplyr filter
+#' @importFrom dplyr if_else
 #' @importFrom dplyr mutate
 #'
 #' @importFrom ggplot2 aes
@@ -52,6 +54,7 @@
 #' @importFrom proj.build cat_setup
 #' @importFrom proj.build check_names
 #' @importFrom proj.build list_merge
+#' @importFrom proj.build list_args
 #' @importFrom proj.build msg
 #' @importFrom proj.build nothing
 #' @importFrom proj.build warn

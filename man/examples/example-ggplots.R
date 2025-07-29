@@ -38,42 +38,80 @@ out <- cl_lapply_workflow(.iteration = iteration[c(1, 2, 3, 5, 6)],
                           },
                           .write = overwriteRaster)
 
-#### Examples
-
 # Define mapdt
 mapdt <- data.table(file_ud = iteration$file_output,
                     row     = iteration$individual_id,
                     column  = iteration$parameter_id)
 
-# Plot map with default options
-# * Note that panel four is blank
+#### Example (1): Plot map with default options
+# Note that panel four is blank
 ggmaps(mapdt, 
        .map = map, .xlim = xlim, .ylim = ylim)
 
-# Add coastline
+#### Example (2): Add coastline
 # * Note that the coastline in panel four is transparent
 # * (optional) Simplify coastline for improved speed
 ggmaps(mapdt, 
        .map = map, .xlim = xlim, .ylim = ylim,
        .coast = coast, 
        .coast_tolerance = 10, .coast_mask = TRUE)
+# Adjust the coastline colour (fill) by specifying coast$col and coast$alpha
+coast_green       <- coast
+coast_green$col   <- "darkgreen"
+coast_green$alpha <- 0.5
+ggmaps(mapdt, 
+       .map = map, .xlim = xlim, .ylim = ylim,
+       .coast = coast_green, 
+       .coast_tolerance = 10, .coast_mask = TRUE)
+# Customise other options via .geom_coast
+ggmaps(mapdt, 
+       .map = map, .xlim = xlim, .ylim = ylim,
+       .coast = coast_green, 
+       .coast_tolerance = 10, .coast_mask = TRUE, 
+       .geom_coast = list(linewidth = 0))
+# To completely hide the coastline on blank panels, set:
+# `.trans_coast = 0` & `linewidth = 0`
+ggmaps(mapdt, 
+       .map = map, .xlim = xlim, .ylim = ylim,
+       .coast = coast_green, 
+       .coast_tolerance = 10, .coast_mask = TRUE, 
+       .trans_coast = 0,
+       .geom_coast = list(linewidth = 0))
 
-# Add polygon (e.g., MPA boundary)
-# * Note that the coastline in panel four is transparent
+#### Example (3): Add polygon (e.g., MPA boundary)
+# Note that the coastline in panel four is transparent
+# Colours are specified via poly$col, poly$alpha as for coast
+# Other options are specified via .geom_poly
 ggmaps(mapdt,
-       .map = map, # .xlim = xlim, .ylim = ylim,
+       .map = map, .xlim = xlim, .ylim = ylim,
        .coast = coast, .coast_mask = TRUE,
-       .poly = mpa)
+       .poly = mpa, 
+       .geom_poly = list(linewidth = 2))
+# Hide the polygon on blank plots:
+ggmaps(mapdt,
+       .map = map, .xlim = xlim, .ylim = ylim,
+       .coast = coast, .coast_mask = TRUE,
+       .poly = mpa, 
+       .trans_coast = 0,
+       .geom_coast = list(linewidth = 0),
+       .trans_poly = 0,
+       .geom_poly = list(linewidth = 2))
 
-# Add points e.g., acoustic receivers
-# * Note panel four
+#### Example (4) Add points e.g., acoustic receivers
+# Note receivers are not added on blank panels
 ggmaps(mapdt, 
        .map = map, .xlim = xlim, .ylim = ylim,
        .coast = coast, .coast_mask = TRUE,
        .moorings = dat_sim_moorings)
+ggmaps(mapdt, 
+       .map = map, .xlim = xlim, .ylim = ylim,
+       .coast = coast, .coast_mask = TRUE,
+       .moorings = dat_sim_moorings, 
+       .geom_moorings = list(col = "red", shape = 4, size = 5))
 
-# Add movement path(s)
-# a) Define example movement paths for a couple of rows/columns
+#### Example (5) Add movement path(s)
+# Define example movement paths for a couple of rows/columns
+# (We assume there are no paths for blank panels)
 paths <- rbind(
   data.table(row = "A", column = 1, 
              timestep = 1:3, 
@@ -83,12 +121,25 @@ paths <- rbind(
              timestep = 1:3, 
              x = c(699333.5, 699281.2, 701373.1), 
              y = c(6268266, 6266645, 6267325)))
-# b) Plot maps with movement paths
+# Plot maps with movement paths
 ggmaps(mapdt, 
        .map = map, .xlim = xlim, .ylim = ylim,
        .coast = coast, .coast_mask = TRUE,
        .moorings = dat_sim_moorings, 
        .path = paths)
-
+# Update path colour scheme via .scale_path
+ggmaps(mapdt, 
+       .map = map, .xlim = xlim, .ylim = ylim,
+       .coast = coast, .coast_mask = TRUE,
+       .moorings = dat_sim_moorings, 
+       .path = paths, 
+       .scale_path = scale_colour_gradientn(colours = rainbow(100)))
+# And/or customise via .geom_path
+ggmaps(mapdt, 
+       .map = map, .xlim = xlim, .ylim = ylim,
+       .coast = coast, .coast_mask = TRUE,
+       .moorings = dat_sim_moorings, 
+       .path = paths, 
+       .geom_path = list(linewidth = 1, arrow = grid::arrow(length = unit(0.2, "cm"))))
 
 proj.file::dir_cleanup(folder)
