@@ -18,7 +18,8 @@ Imports:
   proj.build,
   rlang, 
   spatial.extensions,
-  terra
+  terra, 
+  viridis
 Suggests:
     actel,
     cli,
