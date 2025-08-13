@@ -5,7 +5,7 @@
 #' * `file_ud`       : a `character` that defines the path to the map, readable by [`terra::rast()`], or `NA`;
 #' @param .map,.coast,.poly,.moorings Spatial layers.
 #' * `.map` is a [`terra::SpatRaster`]. This is used to handle blank panels (panels where `.mapdt$file_ud` does not exist). 
-#' * (optional) `.coast`, `.poly` Simple feature polygons (or similar) that define coastline and/or other relevant boundaries (e.g., a Marine Protected Area). Objects are coerced to simple features for plotting via [`sf::st_as_sf()`].
+#' * (optional) `.coast`, `.poly` Simple feature polygons (or similar) that define coastline and/or other relevant boundaries (e.g., a Marine Protected Area). Objects are coerced to simple features for plotting via [`sf::st_as_sf()`]. To plot individual-specific polygons, include `row` and `column` columns in `.poly` (as for `.mapdt`).
 #' * (optional) `.moorings` A [`data.table::data.table`] of coordinates (in columns `receiver_x` and `receiver_y`). 
 #' @param .path A [`data.table::data.table`] with movement path(s). This must contain the following columns:
 #' * `row`, `column` : row/column identifiers, as for `.mapdt`;
@@ -130,7 +130,7 @@ ggmaps <- function(.mapdt,
     mapdata <- rbindlist(mapdata)
   }
   key <- row <- column <- NULL
-  mapdata[, key := .GRP, by = list(row, column)]
+  mapdata[, key := paste(row, column)]
   
   # Extract colours
   # * TO DO Extract colours from geom_*() elements via get_geom_parameter()
@@ -172,15 +172,21 @@ ggmaps <- function(.mapdt,
     if (!rlang::has_name(.poly, "alpha")) {
       .poly$alpha <- 0.5
     }
+    if (rlang::has_name(.poly, "row") & rlang::has_name(.poly, "column")) {
+      .poly$key <- paste(.poly$row, .poly$column)
+    } else {
+      .poly <- 
+        lapply(unique(mapdata$key), function(key) {
+          .poly$key <- key
+          .poly
+        }) |> 
+        dplyr::bind_rows() |> 
+        mutate(row = mapdata$row[match(.data$key, mapdata$key)], 
+               column = mapdata$column[match(.data$key, mapdata$key)])
+    }
     .poly <- 
-      lapply(unique(mapdata$key), function(key) {
-        .poly$key <- key
-        .poly
-      }) |> 
-      dplyr::bind_rows() |> 
-      mutate(row = mapdata$row[match(.data$key, mapdata$key)], 
-             column = mapdata$column[match(.data$key, mapdata$key)],
-             blank = is.na(mapdata$col[match(.data$key, mapdata$key)]), 
+      .poly |> 
+      mutate(blank = is.na(mapdata$col[match(.data$key, mapdata$key)]), 
              alpha = ifelse(blank, .trans_poly, .data$alpha),
              col = scales::alpha(.data$col, .data$alpha),
              key = NULL)

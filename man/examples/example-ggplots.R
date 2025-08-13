@@ -96,6 +96,32 @@ ggmaps(mapdt,
        .geom_coast = list(linewidth = 0),
        .trans_poly = 0,
        .geom_poly = list(linewidth = 2))
+# Add individual-specific polygons
+# * Here, we compute individual-specific home ranges
+# * We collect them in a MULTIPOLYGON with 'row' and 'column' columns
+# * Then we plot the polygons as usual via `.poly`
+polys <- 
+  lapply(split(iteration, seq_len(nrow(iteration))), function(d) {
+    if (file.exists(d$file_output)) {
+      # Load raster & compute home range
+      r <- terra::rast(d$file_output)
+      poly <- patter::map_hr_home(r)
+      poly <- terra::as.polygons(poly == 1)
+      poly <- poly[poly[[1]] == 1]
+      poly <- poly |> sf::st_as_sf()
+      # Add 'row' and 'column' columns
+      poly$row    <- d$individual_id
+      poly$column <- d$parameter_id
+      poly
+    }
+})
+polys <- do.call(rbind, polys)
+ggmaps(mapdt,
+       .map = map, .xlim = xlim, .ylim = ylim,
+       .coast = coast, .coast_mask = TRUE,
+       .poly = polys, 
+       .trans_coast = 0,
+       .geom_coast = list(linewidth = 0))
 
 #### Example (4) Add points e.g., acoustic receivers
 # Note receivers are not added on blank panels
